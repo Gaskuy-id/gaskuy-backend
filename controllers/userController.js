@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 
 exports.register = async (req, res) => {
   try {
-    const { name, email, password, phone, domicile } = req.body;
+    const { fullName, email, password, phoneNumber, address, role } = req.body;
     const imagePath = req.file ? `/uploads/${req.file.filename}` : null; // Save path
 
     const existingUser = await User.findOne({ email });
@@ -15,7 +15,7 @@ exports.register = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const newUser = new User({ name, email, password: hashedPassword, phone, domicile, image: imagePath });
+    const newUser = new User({ fullName, email, password: hashedPassword, phoneNumber, address, image: imagePath, role});
     await newUser.save();
 
     res.status(201).json({message: "User registered successfully!"});
@@ -43,7 +43,7 @@ exports.login = async (req, res) => {
     }
 
     // Generate JWT token
-    const token = jwt.sign({ userId: user._id }, "your_jwt_secret", { expiresIn: "1h" });
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "1d" });
 
     res.json({ message: "Login successful", token });
   } catch (error) {
