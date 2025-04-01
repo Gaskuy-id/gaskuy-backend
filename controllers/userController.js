@@ -30,7 +30,6 @@ exports.login = async (req, res) => {
     console.log(req.body)
     // Check if the user exists
     const user = await User.findOne({ email:email });
-    console.log(email+' '+password);
     console.log(user);
     if (!user) {
       return res.status(400).json({ error: "Invalid email" });
@@ -50,6 +49,27 @@ exports.login = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+exports.editProfile = async (req, res) => {
+  try {
+    const _id = req.user.id
+    const { fullName, email, phoneNumber, address } = req.body;
+
+    const updatedUser = await User.findByIdAndUpdate(
+      _id, 
+      { fullName, email, phoneNumber, address  }, // Fields to update
+      { new: true, runValidators: true } // Return updated user & validate fields
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json({ message: "Profile updated successfully", user: updatedUser})
+  } catch (error) {
+    res.status(500).json({error: error.message})
+  }
+}
 
 exports.getProfile = async (req, res) => {
   try {
