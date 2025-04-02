@@ -55,11 +55,15 @@ exports.editProfile = async (req, res) => {
     const _id = req.user.id
     const { fullName, email, phoneNumber, address } = req.body;
 
-    const updatedUser = await User.findByIdAndUpdate(
+    const updatedUser = req.file ? await User.findByIdAndUpdate(
       _id, 
-      { fullName, email, phoneNumber, address  }, // Fields to update
-      { new: true, runValidators: true } // Return updated user & validate fields
-    );
+      { fullName, email, phoneNumber, address, image: `/uploads/${req.file.filename}` },
+      { new: true, runValidators: true }
+    ) : await User.findByIdAndUpdate(
+      _id, 
+      { fullName, email, phoneNumber, address },
+      { new: true, runValidators: true }
+    )  
 
     if (!updatedUser) {
       return res.status(404).json({ message: "User not found" });

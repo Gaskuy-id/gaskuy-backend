@@ -9,6 +9,6 @@ const authMiddleware = require("../middlewares/authMiddleware")
 router.post("/register", upload.single('image'), userController.register);
 router.post("/login", userController.login);
 router.get("/profile", authMiddleware, userController.getProfile)
-router.put("/edit", authMiddleware, userController.editProfile)
+router.put("/edit", authMiddleware, upload.single('image'), userController.editProfile)
 
 module.exports = router;
