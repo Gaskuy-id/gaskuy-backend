@@ -1,9 +1,17 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const {BadRequestError, NotFoundError} = require('../errors');
-const { createUser, findUserByEmail, findUserById, updateUser, deleteUser } = require("./mongoose/users");
+const { BadRequestError, NotFoundError } = require('../errors');
+const { createUser, findUserByEmail } = require("./mongoose/users");
 
-const userRegister = async ({fullName, email, password, phoneNumber, address, image, role}) => {
+const registerUser = async ({fullName, email, password, phoneNumber, address, image, role}) => {
+  const user = await findUserByEmail(email)
+
+  console.log(user)
+
+  if(user){
+    throw new NotFoundError("Email sudah digunakan")
+  }
+
   const hashedPassword = await bcrypt.hash(password, 10);
   const newUser = createUser({
     fullName, 
@@ -18,8 +26,8 @@ const userRegister = async ({fullName, email, password, phoneNumber, address, im
   return newUser;
 }
 
-const userLogin = async ({email, password}) => {
-  user = findUserByEmail(email)
+const loginUser = async ({email, password}) => {
+  const user = findUserByEmail(email)
 
   if(!user){
     throw new NotFoundError("Email tidak ditemukan")
@@ -35,6 +43,6 @@ const userLogin = async ({email, password}) => {
 }
 
 module.exports = {
-  userRegister,
-  userLogin
+  registerUser,
+  loginUser
 }

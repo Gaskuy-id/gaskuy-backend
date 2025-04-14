@@ -2,12 +2,9 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
-const userRoutes = require("./routes/userRoutes")
-const connectDB = require("./configs/db");
-const authMiddleware = require("./middlewares/authMiddleware");
+const userRoutes = require("./app/api/v1/users/router")
 
 const app = express();
-
 
 // Middleware to handle CORS
 app.use(
@@ -18,14 +15,16 @@ app.use(
     //})
   cors()
 );
+const notFoundMiddleware = require('./app/middlewares/not-found');
+const handlerErrorMiddleware = require('./app/middlewares/handler-error');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-connectDB()
-
 app.use("/api/users", userRoutes)
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use(express.static(path.join(__dirname, "public")));
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.use(notFoundMiddleware);
+app.use(handlerErrorMiddleware);
+
+module.exports = app;

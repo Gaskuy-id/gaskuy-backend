@@ -1,89 +1,71 @@
-const User = require("../models/User");
-const mongoose = require("mongoose");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
 
-exports.register = async (req, res) => {
+const { StatusCodes } = require('http-status-codes');
+const { registerUser, loginUser } = require("../../../services/authService");
+const { updateUser, findUserById } = require("../../../services/mongoose/users")
+
+exports.register = async (req, res, next) => {
   try {
-    const { fullName, email, password, phoneNumber, address, role } = req.body;
+    const data = req.body;
+    
     const imagePath = req.file ? `/uploads/${req.file.filename}` : null; // Save path
 
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ error: "Email already registered" });
-    }
+    console.log({...data, image: imagePath})
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = await registerUser({
+      ...data,
+      image: imagePath
+    })
 
-    const newUser = new User({ fullName, email, password: hashedPassword, phoneNumber, address, image: imagePath, role});
-    await newUser.save();
-
-    res.status(201).json({message: "User registered successfully!"});
+    res.status(StatusCodes.CREATED).json({
+      message: "User berhasil terdaftar",
+      data: newUser
+    });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    next(error)
   }
 }
 
-exports.login = async (req, res) => {
+exports.login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
-    console.log(req.body)
-    // Check if the user exists
-    const user = await User.findOne({ email:email });
-    console.log(user);
-    if (!user) {
-      return res.status(400).json({ error: "Invalid email" });
-    }
 
-    // Compare password
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(400).json({ error: "Invalid password" });
-    }
+    const token = await loginUser({
+      email,
+      password
+    })
 
-    // Generate JWT token
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "1d" });
-
-    res.json({ message: "Login successful", token });
+    res.status(StatusCodes.OK).json({ message: "Login berhasil", token });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    next(error)
   }
 };
 
-exports.editProfile = async (req, res) => {
+exports.editProfile = async (req, res, next) => {
   try {
     const _id = req.user.id
-    const { fullName, email, phoneNumber, address } = req.body;
-    console.log(req.file)
+    const data = req.body;
 
-    const updatedUser = req.file ? await User.findByIdAndUpdate(
-      _id, 
-      { fullName, email, phoneNumber, address, image: `/uploads/${req.file.filename}` },
-      { new: true, runValidators: true }
-    ) : await User.findByIdAndUpdate(
-      _id, 
-      { fullName, email, phoneNumber, address, image: null },
-      { new: true, runValidators: true }
-    )  
+    const updatedUser = await updateUser(_id, {
+      ...data,
+      image: req.file ? `/uploads/${req.file.filename}` : null
+    })
 
-    if (!updatedUser) {
-      return res.status(404).json({ message: "User not found" });
-    }
-    console.log(updatedUser)
-    res.json({ message: "Profile updated successfully", user: updatedUser})
+    res.status(StatusCodes.OK).json({ message: "Profile berhasil diupdate", user: updatedUser})
   } catch (error) {
-    res.status(500).json({error: error.message})
+    next(error)
   }
-}
+};
 
-exports.getProfile = async (req, res) => {
+exports.getProfile = async (req, res, next) => {
   try {
-    console.log(req.user.id)
-    const user = await User.findById(req.user.id).select("-password");
-    if (!user) return res.status(404).json({ message: "User not found" });
+    const _id = req.user.id
+
+    const user = await findUserById(_id);
+
+    delete user.password;
 
     res.json(user);
   } catch (error) {
-    res.status(500).json({ message: "Server error" });
+    next(error)
   }
-}
+};
