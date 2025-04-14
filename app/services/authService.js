@@ -27,7 +27,7 @@ const registerUser = async ({fullName, email, password, phoneNumber, address, im
 }
 
 const loginUser = async ({email, password}) => {
-  const user = findUserByEmail(email)
+  const user = await findUserByEmail(email)
 
   if(!user){
     throw new NotFoundError("Email tidak ditemukan")

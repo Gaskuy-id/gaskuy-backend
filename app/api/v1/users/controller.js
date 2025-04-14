@@ -62,9 +62,10 @@ exports.getProfile = async (req, res, next) => {
 
     const user = await findUserById(_id);
 
-    delete user.password;
+    const userObj = user.toObject();
+    delete userObj.password;
 
-    res.json(user);
+    res.json(userObj);
   } catch (error) {
     next(error)
   }
