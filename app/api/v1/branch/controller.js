@@ -6,7 +6,7 @@ exports.addBranch = async (req, res, next) => {
     const data = req.body;
     const newBranch = await createBranch(data);
 
-    res.status(StatusCodes.CREATED).json({message: "Branch added successfully!", branch: newBranch});
+    res.status(StatusCodes.CREATED).json({message: "Cabang baru telah ditambahkan", branch: newBranch});
   }catch (error) {
     next(error)
   }
