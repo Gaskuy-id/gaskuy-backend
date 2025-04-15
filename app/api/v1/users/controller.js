@@ -6,15 +6,8 @@ const { updateUser, findUserById } = require("../../../services/mongoose/users")
 exports.register = async (req, res, next) => {
   try {
     const data = req.body;
-    
-    const imagePath = req.file ? `/uploads/${req.file.filename}` : null; // Save path
 
-    console.log({...data, image: imagePath})
-
-    const newUser = await registerUser({
-      ...data,
-      image: imagePath
-    })
+    const newUser = await registerUser(data)
 
     res.status(StatusCodes.CREATED).json({
       message: "User berhasil terdaftar",
@@ -42,7 +35,8 @@ exports.login = async (req, res, next) => {
 
 exports.editProfile = async (req, res, next) => {
   try {
-    const _id = req.user.id
+    const _id = req.user.id;
+    console.log(req.user)
     const data = req.body;
 
     const updatedUser = await updateUser(_id, {
