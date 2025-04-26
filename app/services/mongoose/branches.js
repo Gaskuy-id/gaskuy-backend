@@ -3,7 +3,8 @@ const { BadRequestError, NotFoundError } = require('../../errors');
 
 // OPSIONAL CREATE
 const createBranchServices = async (data) => {
-  const check = await Branch.findOne(data.name);
+  const name = data.name;
+  const check = await Branch.findOne({name});
 
   if(check) throw new BadRequestError('Nama Cabang Sudah Ada/Duplikat');
 

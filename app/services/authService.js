@@ -5,7 +5,7 @@ const { createUserService, findUserByEmailService } = require("./mongoose/users"
 const { createJWT, createTokenUser } = require("../utils");
 
 const signupService = async ({fullName, email, password, phoneNumber, address, image, role}) => {
-  const user = await findUserByEmail(email)
+  const user = await findUserByEmailService(email)
 
   if(user){
     throw new NotFoundError("Email sudah digunakan")
