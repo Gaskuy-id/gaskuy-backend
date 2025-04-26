@@ -1,13 +1,12 @@
-
 const { StatusCodes } = require('http-status-codes');
-const { registerUser, loginUser } = require("../../../services/authService");
-const { updateUser, findUserById } = require("../../../services/mongoose/users")
+const { signupService, signinService } = require("../../../services/authService");
+const { updateUserService, findUserByIdService } = require("../../../services/mongoose/users")
 
-const register = async (req, res, next) => {
+const signupController = async (req, res, next) => {
   try {
     const data = req.body;
 
-    const newUser = await registerUser(data)
+    const newUser = await signupService(data)
 
     res.status(StatusCodes.CREATED).json({
       message: "User berhasil terdaftar",
@@ -18,11 +17,11 @@ const register = async (req, res, next) => {
   }
 }
 
-const login = async (req, res, next) => {
+const signinController = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
-    const token = await loginUser({
+    const token = await signinService({
       email,
       password
     })
@@ -33,7 +32,7 @@ const login = async (req, res, next) => {
   }
 };
 
-const editProfile = async (req, res, next) => {
+const editProfileController = async (req, res, next) => {
   try {
     const _id = req.user.id;
     console.log(req.user)
@@ -50,7 +49,7 @@ const editProfile = async (req, res, next) => {
   }
 };
 
-const getProfile = async (req, res, next) => {
+const getProfileController = async (req, res, next) => {
   try {
     const _id = req.user.id
 
@@ -66,8 +65,8 @@ const getProfile = async (req, res, next) => {
 };
 
 module.exports = {
-    register,
-    login,
-    getProfile,
-    editProfile
+    signupController,
+    signinController,
+    getProfileController,
+    editProfileController
 }

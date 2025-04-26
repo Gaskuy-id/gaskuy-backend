@@ -1,19 +1,19 @@
 const User = require("../../api/v1/users/model")
 const { BadRequestError, NotFoundError } = require('../../errors');
 
-const createUser = async (data) => {
+const createUserService = async (data) => {
   const result = await User.create(data)
 
   return result;
 }
 
-const findUserByEmail = async (email) => {
+const findUserByEmailService = async (email) => {
   const result = await User.findOne({ email });
 
   return result;
 }
 
-const findUserById = async (id) => {
+const findUserByIdService = async (id) => {
   const result = await User.findById(id);
 
   if (!result) {
@@ -23,7 +23,7 @@ const findUserById = async (id) => {
   return result;
 }
 
-const updateUser = async (id, data) => {
+const updateUserService = async (id, data) => {
   const updatedUser = await User.findByIdAndUpdate(id, data, { new: true });
   
   if (!updatedUser) {
@@ -33,16 +33,16 @@ const updateUser = async (id, data) => {
   return updatedUser;
 }
 
-const deleteUser = async (id) => {
+const deleteUserService = async (id) => {
   const deletedUser = User.findByIdAndDelete(id);
 
   return deletedUser;
 }
 
 module.exports = {
-  createUser,
-  findUserById,
-  findUserByEmail,
-  updateUser,
-  deleteUser
+  createUserService,
+  findUserByIdService,
+  findUserByEmailService,
+  updateUserService,
+  deleteUserService
 }

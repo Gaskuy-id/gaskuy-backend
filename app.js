@@ -2,7 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
-const userRoutes = require("./app/api/v1/users/router");
+const userRoutes = require("./app/api/v1/customer/router");
 const branchRoutes = require("./app/api/v1/branch/router");
 const vehicleRoutes = require("./app/api/v1/vehicle/router")
 

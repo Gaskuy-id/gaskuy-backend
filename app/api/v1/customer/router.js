@@ -1,13 +1,13 @@
 const express = require("express");
 
 const router = express.Router();
-const { register, login, getProfile, editProfile } = require("./controller");
+const { signinController, signupController, getProfileController, editProfileController } = require("./controller");
 const upload = require("../../../middlewares/upload");
 const { authenticateUser } = require("../../../middlewares/auth");
 
-router.post("/register", register);
-router.post("/login", login);
-router.get("/profile", authenticateUser, getProfile)
-router.post("/edit", authenticateUser, upload.single('image'), editProfile)
+router.post("/customer/auth/signup", signupController);
+router.post("/customer/auth/signin", signinController);
+router.get("/customer/profile", authenticateUser, getProfileController)
+router.post("/customer/edit", authenticateUser, upload.single('image'), editProfileController)
 
 module.exports = router;

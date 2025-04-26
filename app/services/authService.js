@@ -4,7 +4,7 @@ const { BadRequestError, NotFoundError } = require('../errors');
 const { createUser, findUserByEmail } = require("./mongoose/users");
 const { createJWT, createTokenUser } = require("../utils");
 
-const registerUser = async ({fullName, email, password, phoneNumber, address, image, role}) => {
+const signupService = async ({fullName, email, password, phoneNumber, address, image, role}) => {
   const user = await findUserByEmail(email)
 
   if(user){
@@ -25,7 +25,7 @@ const registerUser = async ({fullName, email, password, phoneNumber, address, im
   return newUser;
 }
 
-const loginUser = async ({email, password}) => {
+const signinService = async ({email, password}) => {
   if (!email || !password) {
     throw new BadRequestError('Please provide email and password');
   }
@@ -46,6 +46,6 @@ const loginUser = async ({email, password}) => {
 }
 
 module.exports = {
-  registerUser,
-  loginUser
+  signupService,
+  signinService
 }

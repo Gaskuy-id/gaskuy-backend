@@ -1,10 +1,10 @@
 const express = require("express");
 
 const router = express.Router();
-const branchController = require("./controller");
+const { createBranchController, getBranchController } = require("./controller");
 const { authenticateUser, authorizeRoles } = require("../../../middlewares/auth")
 
-router.put("/", authenticateUser, authorizeRoles("admin"), branchController.addBranch);
-router.get("/", branchController.getBranch);
+router.put("/branch/", authenticateUser, authorizeRoles("admin"), createBranchController);
+router.get("/branch/", getBranchController);
 
 module.exports = router;
