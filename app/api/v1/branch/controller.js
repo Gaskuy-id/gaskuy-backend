@@ -1,7 +1,7 @@
 const { StatusCodes } = require("http-status-codes");
 const { createBranch, getBranch } = require("../../../services/mongoose/branches");
 
-exports.addBranch = async (req, res, next) => {
+const addBranch = async (req, res, next) => {
   try {
     const data = req.body;
     const newBranch = await createBranch(data);
@@ -12,11 +12,15 @@ exports.addBranch = async (req, res, next) => {
   }
 }
 
-exports.getBranch = async (req, res, next) => {
+const getBranch = async (req, res, next) => {
   try {
     const branches = await getBranch()
     res.status(StatusCodes.OK).json(branches)
   } catch (error) {
     next(error)
   }
+}
+
+module.exports = {
+  addBranch, getBranch
 }
