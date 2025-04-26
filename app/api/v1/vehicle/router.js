@@ -4,9 +4,12 @@ const router = express.Router();
 const upload = require("../../../middlewares/upload");
 
 const { authorizeRoles, authenticateUser } = require("../../../middlewares/auth")
-const { handleCreateVehicle, handleGetVehicle, handleGetVehicleByBranchName } = require("./controller");
+const { createVehicleController, getAllVehicleController, getOneVehicleController, updateVehicleController, deleteVehicleController } = require("./controller");
 
-router.get("/vehicle/", handleGetVehicle)
-router.put("/vehicle/", authenticateUser, authorizeRoles("admin"), upload.array('images'), handleCreateVehicle)
+router.get("/vehicle/branch/:branch", getAllVehicleController);
+router.post("/vehicle", authenticateUser, authorizeRoles("admin"), upload.array('images'), createVehicleController);
+router.get("/vehicle/:id", getOneVehicleController);
+router.put("/vehicle/:id", authenticateUser, authorizeRoles("admin"), updateVehicleController);
+router.delete("/vehicle/:id", authenticateUser, authorizeRoles("admin"), deleteVehicleController)
 
 module.exports = router;

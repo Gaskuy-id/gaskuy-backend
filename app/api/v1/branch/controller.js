@@ -1,8 +1,6 @@
 const { StatusCodes } = require("http-status-codes");
 const { createBranchService, getBranchService } = require("../../../services/mongoose/branches");
 
-console.log('RIAN FIKRI FAKHREZI TES TES TES');
-
 const createBranchController = async (req, res, next) => {
   try {
     const data = req.body;
