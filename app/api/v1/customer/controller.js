@@ -38,7 +38,7 @@ const editProfileController = async (req, res, next) => {
     console.log(req.user)
     const data = req.body;
 
-    const updatedUser = await updateUser(_id, {
+    const updatedUser = await updateUserService(_id, {
       ...data,
       image: req.file ? `/uploads/${req.file.filename}` : null
     })
@@ -53,7 +53,7 @@ const getProfileController = async (req, res, next) => {
   try {
     const _id = req.user.id
 
-    const user = await findUserById(_id);
+    const user = await findUserByIdService(_id);
 
     const userObj = user.toObject();
     delete userObj.password;

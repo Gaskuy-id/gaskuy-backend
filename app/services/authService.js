@@ -1,7 +1,7 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { BadRequestError, NotFoundError } = require('../errors');
-const { createUser, findUserByEmail } = require("./mongoose/users");
+const { createUserService, findUserByEmailService } = require("./mongoose/users");
 const { createJWT, createTokenUser } = require("../utils");
 
 const signupService = async ({fullName, email, password, phoneNumber, address, image, role}) => {
@@ -12,7 +12,7 @@ const signupService = async ({fullName, email, password, phoneNumber, address, i
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
-  const newUser = createUser({
+  const newUser = createUserService({
     fullName, 
     email,
     password: hashedPassword, 
@@ -30,7 +30,7 @@ const signinService = async ({email, password}) => {
     throw new BadRequestError('Please provide email and password');
   }
 
-  const user = await findUserByEmail(email)
+  const user = await findUserByEmailService(email)
 
   if(!user){
     throw new NotFoundError("Email tidak ditemukan")
