@@ -3,7 +3,7 @@ const { StatusCodes } = require('http-status-codes');
 const { registerUser, loginUser } = require("../../../services/authService");
 const { updateUser, findUserById } = require("../../../services/mongoose/users")
 
-exports.register = async (req, res, next) => {
+const register = async (req, res, next) => {
   try {
     const data = req.body;
 
@@ -18,7 +18,7 @@ exports.register = async (req, res, next) => {
   }
 }
 
-exports.login = async (req, res, next) => {
+const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
@@ -33,7 +33,7 @@ exports.login = async (req, res, next) => {
   }
 };
 
-exports.editProfile = async (req, res, next) => {
+const editProfile = async (req, res, next) => {
   try {
     const _id = req.user.id;
     console.log(req.user)
@@ -50,7 +50,7 @@ exports.editProfile = async (req, res, next) => {
   }
 };
 
-exports.getProfile = async (req, res, next) => {
+const getProfile = async (req, res, next) => {
   try {
     const _id = req.user.id
 
@@ -64,3 +64,10 @@ exports.getProfile = async (req, res, next) => {
     next(error)
   }
 };
+
+module.exports = {
+    register,
+    login,
+    getProfile,
+    editProfile
+}
