@@ -1,8 +1,7 @@
 const Branch = require("../../api/v1/branch/model")
 const { BadRequestError, NotFoundError } = require('../../errors');
 
-// OPSIONAL CREATE
-const createBranchServices = async (data) => {
+const createBranchService = async (data) => {
   const name = data.name;
   const check = await Branch.findOne({name});
 
@@ -13,13 +12,13 @@ const createBranchServices = async (data) => {
   return result;
 }
 
-const getAllBranchServices = async () => {
+const getAllBranchService = async () => {
   const result = await Branch.find();
 
   return result;
 }
 
 module.exports = {
-  createBranchServices,
-  getAllBranchServices
+  createBranchService,
+  getAllBranchService
 }
