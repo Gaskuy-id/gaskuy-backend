@@ -7,6 +7,7 @@ const branchRoutes = require("./app/api/v1/branch/router");
 const vehicleRoutes = require("./app/api/v1/vehicle/router")
 
 const app = express();
+const v1 = "/api/v1/cms"
 
 // Middleware to handle CORS
 app.use(
@@ -23,9 +24,9 @@ const handlerErrorMiddleware = require('./app/middlewares/handler-error');
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use("/api/users", userRoutes);
-app.use("/api/branches", branchRoutes);
-app.use("/api/vehicles", vehicleRoutes);
+app.use(v1, userRoutes);
+app.use(v1, branchRoutes);
+app.use(v1, vehicleRoutes);
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use(notFoundMiddleware);
