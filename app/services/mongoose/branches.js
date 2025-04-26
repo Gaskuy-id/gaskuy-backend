@@ -1,19 +1,24 @@
 const Branch = require("../../api/v1/branch/model")
 const { BadRequestError, NotFoundError } = require('../../errors');
 
-const createBranch = async (data) => {
-  const newBranch = await Branch.create(data);
+const createBranchService = async (data) => {
+  const name = data.name;
+  const check = await Branch.findOne({name});
 
-  return newBranch;
+  if(check) throw new BadRequestError('Nama Cabang Sudah Ada/Duplikat');
+
+  const result = await Branch.create(data);
+
+  return result;
 }
 
-const getBranch = async () => {
-  const branches = await Branch.find();
+const getAllBranchService = async () => {
+  const result = await Branch.find();
 
-  return branches;
+  return result;
 }
 
 module.exports = {
-  createBranch,
-  getBranch
+  createBranchService,
+  getAllBranchService
 }
