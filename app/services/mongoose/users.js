@@ -35,11 +35,11 @@ const getOneUserService = async (req) => {
 
 const updateDriverService = async (req) => {
   const { id } = req.params;
-  const { fullName, email, password, phoneNumber, address, role, driverInfo, image } = req.body;
+  const { fullName, email, password, phoneNumber, address, role, driverInfo, mainImage, detailImage } = req.body;
 
   const result = await User.findOneAndUpdate(
     { _id: id },
-    { fullName, email, password, phoneNumber, address, role, driverInfo, image },
+    { fullName, email, password, phoneNumber, address, role, driverInfo, mainImage, detailImage },
     { new: true, runValidators: true}
   );
 
