@@ -7,6 +7,14 @@ const createVehicleController = async (req, res, next) => {
   try {
     const data = req.body;
 
+    if (req.files['mainImage']) {
+      data.mainImage = req.files['mainImage'][0].filename;
+    }
+
+    if (req.files['detailImages']) {
+      data.detailImages = req.files['detailImages'].map(file => file.filename);
+    }
+
     const result = await createVehicleService(data);
 
     res.status(StatusCodes.CREATED).json({
