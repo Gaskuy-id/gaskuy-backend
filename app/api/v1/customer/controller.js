@@ -1,5 +1,5 @@
 const { StatusCodes } = require('http-status-codes');
-const { signupService, signinService } = require("../../../services/authService");
+const { signupService, signinService } = require("../../../services/mongoose/auth");
 const { checkoutService, editProfileService, getProfileService } = require("../../../services/mongoose/customers");
 
 const signupController = async (req, res, next) => {

@@ -1,8 +1,9 @@
 const mongoose = require("mongoose");
 
-const driverInfoSchema = new mongoose.Schema({
+const DriverInfoSchema = new mongoose.Schema({
     currentStatus: {type: String, enum: ["online", "offline"], default: "offline", required: true},
-    currentAvailability: {type: String, enum: ["available", "working", "notAvailable"], default: "notAvailable", required: true}
+    currentAvailability: {type: String, enum: ["tersedia", "bekerja", "tidak tersedia"], default: "tidak tersedia", required: true},
+    branch: {type: mongoose.Schema.Types.ObjectId, ref: 'Branch', required: true,}
 }, {_id: false});
 
 const UserSchema = new mongoose.Schema({
@@ -12,7 +13,7 @@ const UserSchema = new mongoose.Schema({
     phoneNumber: {type: String, required: true},
     address: {type: String, required: true},
     role: { type: String, enum: ["admin", "driver", "customer"], default: "customer" },
-    driverInfo: {type: driverInfoSchema},
+    driverInfo: {type: DriverInfoSchema},
     image: String
 });
 
