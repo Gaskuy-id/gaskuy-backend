@@ -12,6 +12,9 @@ const checkoutService = async ({ vehicleId, customerId, withDriver, ordererName,
         throw new NotFoundError("Kendaraan sudah tidak tersedia"); 
     }
 
+    vehicleCheck.currentStatus = "rented";
+    await vehicleCheck.save();
+
     let result = undefined
     if(withDriver){
         const driverCheck = await User.findOne({
