@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 const { dbUri } = require('../config');
 
 // 3] connect ke MongoDb pakai konfigurasi yang udah diimport
-mongoose.connect(dbUri);
+mongoose.connect(dbUri+"replicaSet=rs");
 
 // 4] simpan koneksinya kedalam constant db
 const db = mongoose.connection;

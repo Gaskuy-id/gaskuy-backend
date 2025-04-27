@@ -6,6 +6,7 @@ const getRentalController = async (req, res, next) => {
         const branchId = req.query.branchId;
         const rentalId = req.query.rentalId;
 
+        let result = undefined;
         if(branchId){
             result = getAllRentalByBranchService(branchId);
         }else{

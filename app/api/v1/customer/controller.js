@@ -1,7 +1,6 @@
 const { StatusCodes } = require('http-status-codes');
 const { signupService, signinService } = require("../../../services/authService");
-const { updateUserService, findUserByIdService } = require("../../../services/mongoose/users");
-const { checkoutService } = require("../../../services/mongoose/customers");
+const { checkoutService, editProfileService, getProfileService } = require("../../../services/mongoose/customers");
 
 const signupController = async (req, res, next) => {
     try {
@@ -39,7 +38,7 @@ const editProfileController = async (req, res, next) => {
         
         const data = req.body;
 
-        const updatedUser = await updateUserService(_id, {
+        const updatedUser = await editProfileService(_id, {
         ...data,
         image: req.file ? `/uploads/${req.file.filename}` : null
         })
@@ -54,7 +53,7 @@ const getProfileController = async (req, res, next) => {
     try {
         const _id = req.user.id
 
-        const user = await findUserByIdService(_id);
+        const user = await getProfileService(_id);
 
         const userObj = user.toObject();
         delete userObj.password;
