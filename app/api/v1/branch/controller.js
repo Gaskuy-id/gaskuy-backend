@@ -1,10 +1,10 @@
 const { StatusCodes } = require("http-status-codes");
-const { createBranch, getBranch } = require("../../../services/mongoose/branches");
+const { createBranchService, getBranchService } = require("../../../services/mongoose/branches");
 
-exports.addBranch = async (req, res, next) => {
+const createBranchController = async (req, res, next) => {
   try {
     const data = req.body;
-    const newBranch = await createBranch(data);
+    const newBranch = await createBranchService(data);
 
     res.status(StatusCodes.CREATED).json({message: "Cabang baru telah ditambahkan", branch: newBranch});
   }catch (error) {
@@ -12,11 +12,15 @@ exports.addBranch = async (req, res, next) => {
   }
 }
 
-exports.getBranch = async (req, res, next) => {
+const getBranchController = async (req, res, next) => {
   try {
-    const branches = await getBranch()
+    const branches = await getBranchService()
     res.status(StatusCodes.OK).json(branches)
   } catch (error) {
     next(error)
   }
+}
+
+module.exports = {
+  createBranchController, getBranchController
 }

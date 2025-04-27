@@ -1,48 +1,71 @@
 const User = require("../../api/v1/users/model")
 const { BadRequestError, NotFoundError } = require('../../errors');
 
-const createUser = async (data) => {
-  const result = await User.create(data)
+const createDriverService = async (req) => {
+  const { email, driverInfo} = req.body;
 
-  return result;
-}
+  const user = await User.findOne({ email: email });
 
-const findUserByEmail = async (email) => {
-  const result = await User.findOne({ email });
+  if (!user) throw new NotFoundError(`User dengan email: ${email} tidak ditemukan `);
 
-  return result;
-}
-
-const findUserById = async (id) => {
-  const result = await User.findById(id);
-
-  if (!result) {
-    throw new NotFoundError("User tidak ditemukan")
-  }
-
-  return result;
-}
-
-const updateUser = async (id, data) => {
-  const updatedUser = await User.findByIdAndUpdate(id, data, { new: true });
+  user.role = "driver";
+  user.driverInfo = driverInfo;
+  await user.save();
   
-  if (!updatedUser) {
-    throw new NotFoundError("User tidak ditemukan");
-  }
-
-  return updatedUser;
+  return user;
 }
 
-const deleteUser = async (id) => {
-  const deletedUser = User.findByIdAndDelete(id);
+const getAllUserService = async (req) => {
+  const { role } = req.params;
 
-  return deletedUser;
+  const users = await User.find({ role: role })
+
+  return users;
+}
+
+const getOneUserService = async (req) => {
+  const { id } = req.params;
+
+  const result = await User.findOne({ _id: id})
+
+  if (!result) throw new NotFoundError(`Tidak ada user dengan id: ${id}`);
+
+  return result;
+}
+
+const updateDriverService = async (req) => {
+  const { id } = req.params;
+  const { fullName, email, password, phoneNumber, address, role, driverInfo, mainImage, detailImage } = req.body;
+
+  const result = await User.findOneAndUpdate(
+    { _id: id },
+    { fullName, email, password, phoneNumber, address, role, driverInfo, mainImage, detailImage },
+    { new: true, runValidators: true}
+  );
+
+  if (!result) throw new NotFoundError(`Tidak ada user dengan id ${id}`);
+
+  return result;
+}
+
+const deleteUserService = async (req) => {
+  const { id } = req.params;
+
+  const result = await User.findOne({
+      _id: id,
+  });
+
+  if (!result) throw new NotFoundError(`Tidak ada user dengan id ${id}`);
+
+  await result.deleteOne();
+
+  return result;
 }
 
 module.exports = {
-  createUser,
-  findUserById,
-  findUserByEmail,
-  updateUser,
-  deleteUser
+  createDriverService,
+  getAllUserService,
+  getOneUserService,
+  updateDriverService,
+  deleteUserService
 }

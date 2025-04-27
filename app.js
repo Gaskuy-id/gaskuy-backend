@@ -2,11 +2,14 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
-const userRoutes = require("./app/api/v1/users/router");
+const customerRoutes = require("./app/api/v1/customer/router");
 const branchRoutes = require("./app/api/v1/branch/router");
 const vehicleRoutes = require("./app/api/v1/vehicle/router")
+const userRouters = require("./app/api/v1/users/router")
 
 const app = express();
+const v1 = "/api/v1";
+const cms = v1+"/cms"
 
 // Middleware to handle CORS
 app.use(
@@ -23,9 +26,10 @@ const handlerErrorMiddleware = require('./app/middlewares/handler-error');
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use("/api/users", userRoutes);
-app.use("/api/branches", branchRoutes);
-app.use("/api/vehicles", vehicleRoutes);
+app.use(v1, customerRoutes);
+app.use(cms, branchRoutes);
+app.use(cms, vehicleRoutes);
+app.use(cms, userRouters);
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use(notFoundMiddleware);

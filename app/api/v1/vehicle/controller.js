@@ -1,43 +1,85 @@
 const { StatusCodes } = require('http-status-codes');
 
-const { createVehicle, getVehicle, getVehicleByBranch } = require("../../../services/mongoose/vehicles");
+// Get All, Get One By Id, Create, Update, Delete
+const { createVehicleService, getAllVehicleService, getOneVehicleService, updateVehicleService, deleteVehicleService } = require("../../../services/mongoose/vehicles");
 
-const handleCreateVehicle = async (req, res, next) => {
+const createVehicleController = async (req, res, next) => {
   try {
     const data = req.body;
 
-    const newVehicle = await createVehicle(data);
+    if (req.files['mainImage']) {
+      data.mainImage = req.files['mainImage'][0].filename;
+    }
 
-    res.status(StatusCodes.CREATED).json({message: "Kendaraan baru telah ditambahkan", vehicle: newVehicle})
+    if (req.files['detailImages']) {
+      data.detailImages = req.files['detailImages'].map(file => file.filename);
+    }
+
+    const result = await createVehicleService(data);
+
+    res.status(StatusCodes.CREATED).json({
+      message: "Kendaraan baru telah ditambahkan", 
+      vehicle: result
+    })
   } catch (error) {
     next(error)
   }
 }
 
-const handleGetVehicle = async (req, res, next) => {
+// Get All by Branch
+const getAllVehicleController = async (req, res, next) => {
   try {
-    const { city, currentStatus, passengerCount } = req.query;
+    const { branch } = req.params; // ambil branch dari URL
+    const result = await getAllVehicleService(branch);
 
-    const vehicles = await getVehicle(city, currentStatus, passengerCount)
-
-    res.status(StatusCodes.OK).json(vehicles)
-  } catch (error) {
-    next(error)
-  }
-}
-
-const handleGetVehicleByBranchName = async (req, res, next) => {
-  try {
-    const { branchName } = req.params;
-    const vehicles = await getVehicleByBranch(branchName);
-
-    res.status(StatusCodes.OK).json(vehicles)
+    res.status(StatusCodes.OK).json({
+      vehicles: result,
+    });
   } catch (error) {
     next(error);
   }
 }
+
+const getOneVehicleController = async (req, res, next) => {
+  try {
+    const result = await getOneVehicleService(req);
+
+    res.status(StatusCodes.OK).json({
+      vehicles: result,
+    })
+  } catch (error) {
+    next(error);
+  }
+}
+
+const updateVehicleController = async (req, res, next) => {
+  try {
+    const result = await updateVehicleService(req);
+
+    res.status(StatusCodes.OK).json({
+      vehicles: result,
+    })
+  } catch (error) {
+    next(error);
+  }
+}
+
+const deleteVehicleController = async (req, res, next) => {
+  try {
+    const result = await deleteVehicleService(req);
+
+    res.status(StatusCodes.OK).json({
+      vehicles: result,
+    })
+  } catch (error) {
+    next(error);
+  }
+}
+
 module.exports = {
-  handleCreateVehicle,
-  handleGetVehicle,
-  handleGetVehicleByBranchName
+  createVehicleController,
+  getAllVehicleController,
+  getOneVehicleController,
+  updateVehicleController,
+  deleteVehicleController
 }

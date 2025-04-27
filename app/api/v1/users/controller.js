@@ -1,66 +1,87 @@
+const {
+    createDriverService,
+    getAllUserService,
+    getOneUserService,
+    updateDriverService,
+    deleteUserService
+} = require('../../../services/mongoose/users');
 
 const { StatusCodes } = require('http-status-codes');
-const { registerUser, loginUser } = require("../../../services/authService");
-const { updateUser, findUserById } = require("../../../services/mongoose/users")
 
-exports.register = async (req, res, next) => {
-  try {
-    const data = req.body;
-
-    const newUser = await registerUser(data)
-
-    res.status(StatusCodes.CREATED).json({
-      message: "User berhasil terdaftar",
-      data: newUser
-    });
-  } catch (error) {
-    next(error)
-  }
+// get all user by role
+// /api/v1/cms/users/:role GET
+const getAllUserController = async (req, res, next) => {
+    try {
+        const result = await getAllUserService(req);
+        
+        res.status(StatusCodes.OK).json({
+            data: result,
+        })
+    } catch (error) {
+        next (error);
+    }
 }
 
-exports.login = async (req, res, next) => {
-  try {
-    const { email, password } = req.body;
+// create users (driver)
+// /api/v1/cms/users POST
+const createDriverController = async (req, res, next) => {
+    try {
+        const result = await createDriverService(req);
+        
+        res.status(StatusCodes.CREATED).json({
+            data: result,
+        })
+    } catch (error) {
+        next (error);
+    }
+}
 
-    const token = await loginUser({
-      email,
-      password
-    })
+// get one user by id
+// /api/v1/cms/users/:id GET
+const getOneUserController = async (req, res, next) => {
+    try {
+        const result = await getOneUserService(req);
+        
+        res.status(StatusCodes.OK).json({
+            data: result,
+        })
+    } catch (error) {
+        next (error);
+    }
+}
 
-    res.status(StatusCodes.OK).json({ message: "Login berhasil", token });
-  } catch (error) {
-    next(error)
-  }
-};
+// update user (driver)
+// /api/v1/cms/users/:id PUT
+const updateDriverController = async (req, res, next) => {
+    try {
+        const result = await updateDriverService(req);
+        
+        res.status(StatusCodes.OK).json({
+            data: result,
+        })
+    } catch (error) {
+        next (error);
+    }
+}
 
-exports.editProfile = async (req, res, next) => {
-  try {
-    const _id = req.user.id;
-    console.log(req.user)
-    const data = req.body;
+// delete user (driver dan customer)
+// /api/v1/cms/users/:id DELETE
+const deleteUserController = async (req, res, next) => {
+    try {
+        const result = await deleteUserService(req);
+        
+        res.status(StatusCodes.OK).json({
+            data: result,
+        })
+    } catch (error) {
+        next (error);
+    }
+}
 
-    const updatedUser = await updateUser(_id, {
-      ...data,
-      image: req.file ? `/uploads/${req.file.filename}` : null
-    })
-
-    res.status(StatusCodes.OK).json({ message: "Profile berhasil diupdate", user: updatedUser})
-  } catch (error) {
-    next(error)
-  }
-};
-
-exports.getProfile = async (req, res, next) => {
-  try {
-    const _id = req.user.id
-
-    const user = await findUserById(_id);
-
-    const userObj = user.toObject();
-    delete userObj.password;
-
-    res.json(userObj);
-  } catch (error) {
-    next(error)
-  }
-};
+module.exports = {
+    createDriverController,
+    getAllUserController,
+    getOneUserController,
+    updateDriverController,
+    deleteUserController
+}
