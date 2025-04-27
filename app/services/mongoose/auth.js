@@ -1,18 +1,18 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { BadRequestError, NotFoundError } = require('../../errors');
-const { users } = require('../../api/v1/users/model');
+const User = require('../../api/v1/users/model');
 const { createJWT, createTokenUser } = require("../../utils");
 
 const signupService = async ({fullName, email, password, phoneNumber, address, image, role}) => {
-  const user = await users.findOne({email})
+  const user = await User.findOne({email})
 
   if(user){
     throw new NotFoundError("Email sudah digunakan")
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
-  const newUser = users.create({
+  const newUser = User.create({
     fullName, 
     email,
     password: hashedPassword, 
@@ -30,7 +30,7 @@ const signinService = async ({email, password}) => {
     throw new BadRequestError('Please provide email and password');
   }
 
-  const user = await users.findOne({email})
+  const user = await User.findOne({email: email})
 
   if(!user){
     throw new NotFoundError("Email tidak ditemukan")
