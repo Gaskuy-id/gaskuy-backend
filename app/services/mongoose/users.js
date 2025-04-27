@@ -16,7 +16,7 @@ const createDriverService = async (req) => {
 }
 
 const getAllUserService = async (req) => {
-  const { role } = req.query;
+  const { role } = req.params;
 
   const users = await User.find({ role: role })
 
@@ -35,11 +35,11 @@ const getOneUserService = async (req) => {
 
 const updateDriverService = async (req) => {
   const { id } = req.params;
-  const { fullName, email, password, phoneNumber, addres, role, driverInfo, image } = req.body;
+  const { fullName, email, password, phoneNumber, address, role, driverInfo, image } = req.body;
 
-  const result = await Vehicle.findOneAndUpdate(
+  const result = await User.findOneAndUpdate(
     { _id: id },
-    { fullName, email, password, phoneNumber, addres, role, driverInfo, image },
+    { fullName, email, password, phoneNumber, address, role, driverInfo, image },
     { new: true, runValidators: true}
   );
 
