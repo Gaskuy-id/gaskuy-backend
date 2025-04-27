@@ -24,16 +24,16 @@ const checkoutService = async ({ vehicleId, customerId, withDriver, ordererName,
         if(withDriver){
             const driverCheck = await User.findOne({
                 "role": "driver",
-                "driverInfo.currentAvailability": "available"
+                "driverInfo.currentAvailability": "tersedia"
             })
 
             if (!driverCheck){
                 throw new NotFoundError("Sopir sedang tidak tersedia");
             }
-            driverCheck.driverInfo.currentAvailability = "working";
+            driverCheck.driverInfo.currentAvailability = "bekerja";
             await driverCheck.save( {session} );
 
-            result = await Rental.create({
+            result = await Rental.create([{
                 customerId,
                 vehicleId,
                 driverId: driverCheck._id,
@@ -45,7 +45,7 @@ const checkoutService = async ({ vehicleId, customerId, withDriver, ordererName,
                 locationStart,
                 finishedAt,
                 locationEnd
-            },
+            }],
                 { session }
             )
 
