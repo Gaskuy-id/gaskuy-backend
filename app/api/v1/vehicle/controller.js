@@ -1,7 +1,7 @@
 const { StatusCodes } = require('http-status-codes');
 
 // Get All, Get One By Id, Create, Update, Delete
-const { createVehicleService, getAllVehicleService, getOneVehicleService, updateVehicleService, deleteVehicleService } = require("../../../services/mongoose/vehicles");
+const { createVehicleService, getAllVehicleService, getAllVehicleByCityService, getOneVehicleService, updateVehicleService, deleteVehicleService } = require("../../../services/mongoose/vehicles");
 
 const createVehicleController = async (req, res, next) => {
   try {
@@ -31,6 +31,20 @@ const getAllVehicleController = async (req, res, next) => {
   try {
     const { branch } = req.params; // ambil branch dari URL
     const result = await getAllVehicleService(branch);
+
+    res.status(StatusCodes.OK).json({
+      vehicles: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+// Get All by City
+const getAllVehicleByCityController = async (req, res, next) => {
+  try {
+    const { city } = req.params; // ambil branch dari URL
+    const result = await getAllVehicleByCityService(city);
 
     res.status(StatusCodes.OK).json({
       vehicles: result,
@@ -79,6 +93,7 @@ const deleteVehicleController = async (req, res, next) => {
 module.exports = {
   createVehicleController,
   getAllVehicleController,
+  getAllVehicleByCityController,
   getOneVehicleController,
   updateVehicleController,
   deleteVehicleController
