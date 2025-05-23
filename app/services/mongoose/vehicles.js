@@ -18,14 +18,17 @@ const createVehicleService = async (data) => {
 }
 
 const getAllVehicleService = async (branchId) => {
-  const vehicles = await Vehicle.find({ branchId: branchId })
-    .populate({
-      path: 'branchId',
-      select: '_id name city address'
-    });
+  const vehicles = await Vehicle.find({
+    branchId: branchId,
+    deletedAt: null
+  }).populate({
+    path: 'branchId',
+    select: '_id name city address'
+  });
 
   return vehicles;
 }
+
 
 const getOneVehicleService = async (req) => {
   const { id } = req.params;
@@ -65,7 +68,8 @@ const deleteVehicleService = async (req) => {
 
   if (!result) throw new NotFoundError(`Tidak ada kendaraan dengan id ${id}`);
 
-  await result.deleteOne();
+  result.deletedAt = new Date();
+  await result.save();
 
   return result;
 }

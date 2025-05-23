@@ -4,7 +4,10 @@ const DriverInfoSchema = new mongoose.Schema({
     currentStatus: {type: String, enum: ["online", "offline"], default: "offline", required: true},
     currentAvailability: {type: String, enum: ["tersedia", "bekerja", "tidak tersedia"], default: "tidak tersedia", required: true},
     branch: {type: mongoose.Schema.Types.ObjectId, ref: 'Branch', required: true,}
-}, {_id: false});
+    },
+    { timestamps: true },
+    {_id: false}
+);
 
 const UserSchema = new mongoose.Schema({
     fullName: {type: String, required: true},
@@ -15,6 +18,8 @@ const UserSchema = new mongoose.Schema({
     role: { type: String, enum: ["admin", "driver", "customer"], default: "customer" },
     driverInfo: {type: DriverInfoSchema},
     image: String
-});
+    },
+        { timestamps: true }
+);
 
 module.exports = mongoose.model("User", UserSchema);

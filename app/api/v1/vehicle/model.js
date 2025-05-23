@@ -13,6 +13,9 @@ const VehicleSchema = new mongoose.Schema({
   currentStatus: { type: String, enum: ["tersedia", "tidak tersedia", "maintenance"], default: "tersedia" },
   mainImage: { type: String },
   detailImages: [{ type: String }],
-});
+  deletedAt: { type: Date, default: null }
+  },
+      { timestamps: true }
+);
 
 module.exports = mongoose.model("Vehicle", VehicleSchema);
