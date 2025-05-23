@@ -57,7 +57,8 @@ const deleteUserService = async (req) => {
 
   if (!result) throw new NotFoundError(`Tidak ada user dengan id ${id}`);
 
-  await result.deleteOne();
+  result.deletedAt = new Date();
+  await result.save();
 
   return result;
 }

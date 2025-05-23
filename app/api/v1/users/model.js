@@ -17,9 +17,10 @@ const UserSchema = new mongoose.Schema({
     address: {type: String, required: true},
     role: { type: String, enum: ["admin", "driver", "customer"], default: "customer" },
     driverInfo: {type: DriverInfoSchema},
+    deletedAt: { type: Date, default: null },
     image: String
     },
-        { timestamps: true }
+        { timestamps: true },
 );
 
 module.exports = mongoose.model("User", UserSchema);
