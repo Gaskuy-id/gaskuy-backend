@@ -1,5 +1,5 @@
 const Vehicle = require("../../api/v1/vehicle/model");
-const Branch = require("../../api/v1/branch/model")
+const Branch = require("../../api/v1/branch/model");
 const { BadRequestError, NotFoundError } = require('../../errors');
 const NotFound = require("../../errors/not-found");
 
