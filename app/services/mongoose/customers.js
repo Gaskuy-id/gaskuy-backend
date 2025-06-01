@@ -100,10 +100,36 @@ const getProfileService = async (id) => {
     return result;
 }
 
+const getAvailableVehiclesService = async (city, currentStatus, passengerCount) => {
+    const vehicles = await Vehicle.aggregate([
+        {
+            $lookup: {
+                from: "branches",
+                localField: "branchId",
+                foreignField: "_id",
+                as: "branch"
+            },
+        },
+        {
+            $unwind: "$branch" 
+        },
+        {
+            $match: {
+            "branch.city": city,
+            seat: { $gte: Number(passengerCount) },
+            "currentStatus": currentStatus
+            }
+        }
+    ]);
+
+    return vehicles;
+}
+
 module.exports = {
     checkoutService,
     getAllRentalHistoryService,
     getRentalHistoryDetailsService,
     editProfileService,
-    getProfileService
+    getProfileService,
+    getAvailableVehiclesService
 }

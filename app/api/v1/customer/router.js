@@ -1,10 +1,11 @@
 const express = require("express");
 
 const router = express.Router();
-const { signinController, signupController, getProfileController, editProfileController, checkoutController } = require("./controller");
+const { signinController, signupController, getProfileController, editProfileController, checkoutController, getAvailableVehiclesController } = require("./controller");
 const upload = require("../../../middlewares/upload");
 const { authenticateUser } = require("../../../middlewares/auth");
 
+router.get("/vehicles", getAvailableVehiclesController);
 router.post("/customer/auth/signup", signupController);
 router.post("/customer/auth/signin", signinController);
 router.get("/customer/profile", authenticateUser, getProfileController)

@@ -4,9 +4,10 @@ const router = express.Router();
 const upload = require("../../../middlewares/upload");
 
 const { authorizeRoles, authenticateUser } = require("../../../middlewares/auth")
-const { createVehicleController, getAllVehicleController, getOneVehicleController, updateVehicleController, deleteVehicleController } = require("./controller");
+const { createVehicleController, getAllVehicleController, getAllVehicleByCityController, getOneVehicleController, updateVehicleController, deleteVehicleController } = require("./controller");
 
 router.get("/vehicle/branch/:branch", getAllVehicleController);
+router.get("/vehicle/city/:city", getAllVehicleByCityController);
 router.post(
     "/vehicle",
     authenticateUser,
