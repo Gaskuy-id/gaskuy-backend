@@ -83,12 +83,15 @@ const deleteVehicleController = async (req, res, next) => {
     const result = await deleteVehicleService(req);
 
     res.status(StatusCodes.OK).json({
-      vehicles: result,
-    })
+      message: "Kendaraan berhasil dihapus",
+      deletedAt: result.deletedAt,
+      vehicle: result,
+    });
   } catch (error) {
     next(error);
   }
 }
+
 
 module.exports = {
   createVehicleController,
