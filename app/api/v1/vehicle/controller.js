@@ -1,7 +1,7 @@
 const { StatusCodes } = require('http-status-codes');
 
 // Get All, Get One By Id, Create, Update, Delete
-const { createVehicleService, getAllVehicleService, getOneVehicleService, updateVehicleService, deleteVehicleService } = require("../../../services/mongoose/vehicles");
+const { createVehicleService, getAllVehicleService, getAllVehicleByCityService, getOneVehicleService, updateVehicleService, deleteVehicleService } = require("../../../services/mongoose/vehicles");
 
 const createVehicleController = async (req, res, next) => {
   try {
@@ -40,6 +40,20 @@ const getAllVehicleController = async (req, res, next) => {
   }
 }
 
+// Get All by City
+const getAllVehicleByCityController = async (req, res, next) => {
+  try {
+    const { city } = req.params; // ambil branch dari URL
+    const result = await getAllVehicleByCityService(city);
+
+    res.status(StatusCodes.OK).json({
+      vehicles: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
 const getOneVehicleController = async (req, res, next) => {
   try {
     const result = await getOneVehicleService(req);
@@ -69,16 +83,20 @@ const deleteVehicleController = async (req, res, next) => {
     const result = await deleteVehicleService(req);
 
     res.status(StatusCodes.OK).json({
-      vehicles: result,
-    })
+      message: "Kendaraan berhasil dihapus",
+      deletedAt: result.deletedAt,
+      vehicle: result,
+    });
   } catch (error) {
     next(error);
   }
 }
 
+
 module.exports = {
   createVehicleController,
   getAllVehicleController,
+  getAllVehicleByCityController,
   getOneVehicleController,
   updateVehicleController,
   deleteVehicleController
