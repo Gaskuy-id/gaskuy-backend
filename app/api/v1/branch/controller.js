@@ -12,7 +12,7 @@ const createBranchController = async (req, res, next) => {
   }
 }
 
-const getBranchController = async (req, res, next) => {
+const getAllBranchController = async (req, res, next) => {
   try {
     const branches = await getBranchService()
     res.status(StatusCodes.OK).json(branches)
@@ -22,5 +22,5 @@ const getBranchController = async (req, res, next) => {
 }
 
 module.exports = {
-  createBranchController, getBranchController
+  createBranchController, getAllBranchController
 }
