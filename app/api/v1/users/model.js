@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
 
 const DriverInfoSchema = new mongoose.Schema({
-    currentStatus: {type: String, enum: ["online", "offline"], default: "offline", required: true},
-    currentAvailability: {type: String, enum: ["tersedia", "bekerja", "tidak tersedia"], default: "tidak tersedia", required: true},
+    //currentStatus: {type: String, enum: ["online", "offline"], default: "offline", required: true},
+    currentStatus: {type: String, enum: ["tersedia", "bekerja", "tidak tersedia"], default: "tidak tersedia", required: true},
     branch: {type: mongoose.Schema.Types.ObjectId, ref: 'Branch', required: true,}
     },
     { timestamps: true },

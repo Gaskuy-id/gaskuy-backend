@@ -29,8 +29,8 @@ const createDriverService = async ({fullName, email, password, phoneNumber, addr
     password: hashedPassword, 
     phoneNumber, 
     address, 
-    image, 
-    role
+    currentStatus,
+    role : "driver"
   })
 
   return newDriver;
