@@ -1,18 +1,39 @@
 const User = require("../../api/v1/users/model")
 const { BadRequestError, NotFoundError } = require('../../errors');
 
-const createDriverService = async (req) => {
-  const { email, driverInfo} = req.body;
+// const createDriverService = async (req) => {
+//   const { email, driverInfo} = req.body;
 
-  const user = await User.findOne({ email: email });
+//   const user = await User.findOne({ email: email });
 
-  if (!user) throw new NotFoundError(`User dengan email: ${email} tidak ditemukan `);
+//   if (!user) throw new NotFoundError(`User dengan email: ${email} tidak ditemukan `);
 
-  user.role = "driver";
-  user.driverInfo = driverInfo;
-  await user.save();
+//   user.role = "driver";
+//   user.driverInfo = driverInfo;
+//   await user.save();
   
-  return user;
+//   return user;
+// }
+
+const createDriverService = async ({fullName, email, password, phoneNumber, address, image, role}) => {
+  const user = await User.findOne({email})
+
+  if(user){
+    throw new NotFoundError("Email sudah digunakan")
+  }
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+  const newUser = User.create({
+    fullName, 
+    email,
+    password: hashedPassword, 
+    phoneNumber, 
+    address, 
+    image, 
+    role
+  })
+
+  return newUser;
 }
 
 const getAllUserService = async (req) => {
