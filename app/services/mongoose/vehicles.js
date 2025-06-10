@@ -5,6 +5,7 @@ const NotFound = require("../../errors/not-found");
 
 const createVehicleService = async (data) => {
   const { branchId } = data;
+  console.log(data)
   
   const branch = await Branch.findById(branchId);
 
@@ -29,6 +30,16 @@ const getAllVehicleService = async (branchId) => {
   return vehicles;
 }
 
+const getAllVehicleByCityService = async (city) => {
+  const branch = await Branch.findOne({city: city});
+  const vehicles = await Vehicle.find({branchId: branch._id})
+    .populate({
+      path: 'branchId',
+      select: '_id name city address'
+    });
+
+  return vehicles;
+}
 
 const getOneVehicleService = async (req) => {
   const { id } = req.params;
@@ -77,6 +88,7 @@ const deleteVehicleService = async (req) => {
 module.exports = {
   createVehicleService,
   getAllVehicleService,
+  getAllVehicleByCityService,
   getOneVehicleService,
   updateVehicleService,
   deleteVehicleService

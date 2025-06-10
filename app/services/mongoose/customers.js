@@ -17,6 +17,8 @@ const checkoutService = async ({ vehicleId, customerId, withDriver, ordererName,
             throw new NotFoundError("Kendaraan sudah tidak tersedia"); 
         }
 
+        
+
         vehicleCheck.currentStatus = "tidak tersedia";
         await vehicleCheck.save( {session} );
 
@@ -30,6 +32,7 @@ const checkoutService = async ({ vehicleId, customerId, withDriver, ordererName,
             if (!driverCheck){
                 throw new NotFoundError("Sopir sedang tidak tersedia");
             }
+
             driverCheck.driverInfo.currentAvailability = "bekerja";
             await driverCheck.save( {session} );
 
@@ -50,7 +53,7 @@ const checkoutService = async ({ vehicleId, customerId, withDriver, ordererName,
             )
 
         }else{
-            result = await Rental.create({
+            result = await Rental.create([{
                 customerId,
                 vehicleId,
                 branchId: vehicleCheck.branchId,
@@ -61,7 +64,9 @@ const checkoutService = async ({ vehicleId, customerId, withDriver, ordererName,
                 locationStart,
                 finishedAt,
                 locationEnd
-            }, {session})
+            }], 
+            {session}
+        )
         }
 
         await session.commitTransaction();
@@ -100,10 +105,45 @@ const getProfileService = async (id) => {
     return result;
 }
 
+const getAvailableVehiclesService = async (city, currentStatus, passengerCount) => {
+    const vehicles = await Vehicle.aggregate([
+        {
+            $lookup: {
+                from: "branches",
+                localField: "branchId",
+                foreignField: "_id",
+                as: "branch"
+            },
+        },
+        {
+            $unwind: "$branch" 
+        },
+        {
+            $match: {
+            "branch.city": city,
+            seat: { $gte: Number(passengerCount) },
+            "currentStatus": currentStatus
+            }
+        }
+    ]);
+
+    return vehicles;
+}
+
+const createRentalReview = async (_id, rating, review) => {
+    rental.findOneAndUpdate(
+        {_id: _id}, 
+        {$set: {
+            rating: rating,
+            review: review
+        }})
+}
+
 module.exports = {
     checkoutService,
     getAllRentalHistoryService,
     getRentalHistoryDetailsService,
     editProfileService,
-    getProfileService
+    getProfileService,
+    getAvailableVehiclesService
 }
