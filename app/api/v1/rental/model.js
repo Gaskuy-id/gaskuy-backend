@@ -1,5 +1,14 @@
 const mongoose = require("mongoose");
 
+const ConfirmationsSchema = new mongoose.Schema({
+    refundRequested: {type: Boolean},
+    vehicleTaken: {type: Boolean},
+    vehicleReturned: {type: Boolean},
+    finePaid: {type: Boolean}
+}, {
+    _id: false
+})
+
 const RentalSchema = new mongoose.Schema({
         customerId: {type: mongoose.Schema.Types.ObjectId, ref: "User", required: true},
         driverId: {type: mongoose.Schema.Types.ObjectId, ref: "User"},    
@@ -17,7 +26,8 @@ const RentalSchema = new mongoose.Schema({
         finishedAt: {type: Date},
         locationEnd: {type: String, required: true},
         rating: {type: Number},
-        review: {type: String}
+        review: {type: String},
+        confirmations: {type: ConfirmationsSchema}
     },
         { timestamps: true }
 );
