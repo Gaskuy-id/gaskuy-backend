@@ -9,8 +9,8 @@ const signupController = async (req, res, next) => {
         const newUser = await signupService(data)
 
         res.status(StatusCodes.CREATED).json({
-        message: "User berhasil terdaftar",
-        data: newUser
+            message: "User berhasil terdaftar",
+            data: newUser
         });
     } catch (error) {
         next(error)
@@ -22,11 +22,14 @@ const signinController = async (req, res, next) => {
         const { email, password } = req.body;
 
         const token = await signinService({
-        email,
-        password
+            email,
+            password
         })
 
-        res.status(StatusCodes.OK).json({ message: "Login berhasil", token });
+        res.status(StatusCodes.OK).json({ 
+            message: "Login berhasil", 
+            data: token
+        });
     } catch (error) {
         next(error)
     }
@@ -39,11 +42,13 @@ const editProfileController = async (req, res, next) => {
         const data = req.body;
 
         const updatedUser = await editProfileService(_id, {
-        ...data,
-        image: req.file ? `/uploads/${req.file.filename}` : null
+            ...data,
+            image: req.file ? `/uploads/${req.file.filename}` : null
         })
     
-        res.status(StatusCodes.OK).json({ message: "Profile berhasil diupdate", user: updatedUser})
+        res.status(StatusCodes.OK).json({ 
+            message: "Profile berhasil diupdate", 
+            data: updatedUser})
     } catch (error) {
         next(error)
     }
@@ -58,7 +63,9 @@ const getProfileController = async (req, res, next) => {
         const userObj = user.toObject();
         delete userObj.password;
 
-        res.status(StatusCodes.OK).json(userObj);
+        res.status(StatusCodes.OK).json({
+            data: userObj
+        });
     } catch (error) {
         next(error)
     }
@@ -68,7 +75,10 @@ const getAvailableVehiclesController = async (req, res, next) => {
     try {
         const { city, currentStatus, passengerCount } = req.query;
         const result = await getAvailableVehiclesService(city, currentStatus, passengerCount);
-        res.status(StatusCodes.OK).json(result);
+
+        res.status(StatusCodes.OK).json({
+            data: result
+        });
     } catch (error) {
         next(error)
     }
@@ -80,7 +90,7 @@ const checkoutController = async (req, res, next) => {
         const vehicleId = req.params.id;
         const { withDriver, ordererName, ordererPhone, ordererEmail, startedAt, locationStart, finishedAt, locationEnd, note }
  = req.body;
-        
+
         const result = await checkoutService({
             customerId, 
             vehicleId,
@@ -95,7 +105,11 @@ const checkoutController = async (req, res, next) => {
             note
         });
 
-        res.status(StatusCodes.OK).json({message: "Order berhasil", rental: result})
+
+        res.status(StatusCodes.OK).json({
+            message: "Order berhasil", 
+            rental: result
+        })
     } catch (error) {
         next(error)
     }

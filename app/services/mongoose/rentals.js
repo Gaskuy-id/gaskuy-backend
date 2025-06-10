@@ -1,5 +1,6 @@
 const Rental = require("../../api/v1/rental/model");
 const Branch = require("../../api/v1/branch/model");
+const Vehicle = require("../../api/v1/vehicle/model");
 const { BadRequestError, NotFoundError } = require('../../errors');
 
 const getAllRentalByBranchService = async (branchId) => {
@@ -14,7 +15,38 @@ const getOneRentalByIdService = async (rentalId) => {
     return result;
 }
 
+const confirmationsService = async (rentalId, confirmationType, confirmationValue) => {
+    const CONFIRMATION_FIELDS = ["vehicleTaken", "vehicleReturned", "refundRequested", "finePaid"];
+    if(rentalId==undefined | confirmationType==undefined | confirmationValue==undefined){
+        throw new BadRequestError("Data tidak lengkap");
+    }
+
+    const rental = await Rental.findById(rentalId);
+
+    if (!rental) {
+        throw new BadRequestError("Rental tidak valid");
+    }
+
+    if (!CONFIRMATION_FIELDS.includes(confirmationType)) {
+        throw new BadRequestError("Tipe konfirmasi tidak valid");
+    }
+
+    const currentValue = rental.confirmations?.[confirmationType];
+    if (currentValue !== undefined) {
+        throw new BadRequestError(`Konfirmasi ${confirmationType} sudah dilakukan`);
+    }
+
+    rental.confirmations = {
+        ...(rental.confirmations || {}),
+        [confirmationType]: confirmationValue,
+    };
+    await rental.save()
+
+    return rental;
+}
+
 module.exports = {
     getAllRentalByBranchService,
-    getOneRentalByIdService
+    getOneRentalByIdService,
+    confirmationsService
 }
