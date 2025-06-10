@@ -5,6 +5,7 @@ const NotFound = require("../../errors/not-found");
 
 const createVehicleService = async (data) => {
   const { branchId } = data;
+  console.log(data)
   
   const branch = await Branch.findById(branchId);
 
@@ -60,7 +61,7 @@ const updateVehicleService = async (req) => {
 
   const result = await Vehicle.findOneAndUpdate(
     { _id: id },
-    { name, transmission, year, kilometer, engineCapacity, seat, luggage, branchId, ratePerHour, currentStatus, image},
+    { name, transmission, year, kilometer, engineCapacity, seat, luggage, branchId, ratePerHour, currentStatus, mainImage},
     { new: true, runValidators: true}
   );
 

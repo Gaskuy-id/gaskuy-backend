@@ -1,5 +1,5 @@
 const { StatusCodes } = require("http-status-codes");
-const { createBranchService, getBranchService } = require("../../../services/mongoose/branches");
+const { createBranchService, getAllBranchService } = require("../../../services/mongoose/branches");
 
 const createBranchController = async (req, res, next) => {
   try {
@@ -14,7 +14,7 @@ const createBranchController = async (req, res, next) => {
 
 const getAllBranchController = async (req, res, next) => {
   try {
-    const branches = await getBranchService()
+    const branches = await getAllBranchService()
     res.status(StatusCodes.OK).json(branches)
   } catch (error) {
     next(error)
