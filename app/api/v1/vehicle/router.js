@@ -17,8 +17,18 @@ router.post(
     ]),
     createVehicleController
 );
+router.put(
+    "/vehicle/:id",
+    authenticateUser,
+    authorizeRoles("admin"),
+    upload.fields([
+        { name: 'mainImage', maxCount: 1 },
+        { name: 'detailImages', maxCount: 10 } // maksimal 10 gambar detail
+    ]),
+    updateVehicleController
+);
 router.get("/vehicle/:id", getOneVehicleController);
-router.put("/vehicle/:id", authenticateUser, authorizeRoles("admin"), updateVehicleController);
+// router.put("/vehicle/:id", authenticateUser, authorizeRoles("admin"), updateVehicleController);
 router.delete("/vehicle/:id", authenticateUser, authorizeRoles("admin"), deleteVehicleController)
 
 module.exports = router;
