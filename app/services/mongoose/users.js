@@ -23,7 +23,7 @@ const createDriverService = async ({fullName, email, password, phoneNumber, addr
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
-  const newUser = User.create({
+  const newDriver = User.create({
     fullName, 
     email,
     password: hashedPassword, 
@@ -33,7 +33,7 @@ const createDriverService = async ({fullName, email, password, phoneNumber, addr
     role
   })
 
-  return newUser;
+  return newDriver;
 }
 
 const getAllUserService = async (req) => {
