@@ -1,5 +1,13 @@
 const { StatusCodes } = require("http-status-codes");
-const { getAllRentalByBranchService, getOneRentalByIdService } = require("../../../services/mongoose/rentals");
+const { 
+    getAllRentalByBranchService, 
+    getOneRentalByIdService, 
+    confirmRefundRequestService, 
+    confirmVehicleTakenService, 
+    confirmVehicleReturnService, 
+    confirmFinePaidService,
+    confirmationsService
+} = require("../../../services/mongoose/rentals");
 
 const getRentalController = async (req, res, next) => {
     try {
@@ -8,17 +16,33 @@ const getRentalController = async (req, res, next) => {
 
         let result = undefined;
         if(branchId){
-            result = getAllRentalByBranchService(branchId);
+            result = await getAllRentalByBranchService(branchId);
         }else{
-            result = getOneRentalByIdService(rentalId);
+            result = await getOneRentalByIdService(rentalId);
         }
         
-        res.status(StatusCodes.OK).json(result)
+        res.status(StatusCodes.OK).json({data: result})
+    } catch (error) {
+        next(error)
+    }
+}
+
+const confirmationsController = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const { confirmationType, confirmationValue } = req.body;
+
+        const result = await confirmationsService(id, confirmationType, confirmationValue)
+
+        res.status(StatusCodes.OK).json({
+            data: result
+        })
     } catch (error) {
         next(error)
     }
 }
 
 module.exports = {
-  getRentalController
+  getRentalController,
+  confirmationsController,
 }
