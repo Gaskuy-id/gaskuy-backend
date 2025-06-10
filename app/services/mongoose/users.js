@@ -1,45 +1,41 @@
+// users.js - Service Layer
 const User = require("../../api/v1/users/model")
 const { BadRequestError, NotFoundError } = require('../../errors');
 
-// const createDriverService = async (req) => {
-//   const { email, driverInfo} = req.body;
+const createDriverService = async (req) => {
+  const { fullName, email, password, phoneNumber, address, currentStatus, branch, role } = req.body;
 
-//   const user = await User.findOne({ email: email });
-
-//   if (!user) throw new NotFoundError(`User dengan email: ${email} tidak ditemukan `);
-
-//   user.role = "driver";
-//   user.driverInfo = driverInfo;
-//   await user.save();
-  
-//   return user;
-// }
-
-const createDriverService = async ({fullName, email, password, phoneNumber, address, image, role}) => {
-  const user = await User.findOne({email})
-
-  if(user){
-    throw new NotFoundError("Email sudah digunakan")
+  // Cek apakah email sudah terdaftar
+  const existingUser = await User.findOne({ email: email });
+  if (existingUser) {
+    throw new BadRequestError(`User dengan email: ${email} sudah terdaftar`);
   }
 
-  const hashedPassword = await bcrypt.hash(password, 10);
-  const newDriver = User.create({
-    fullName, 
-    email,
-    password: hashedPassword, 
-    phoneNumber, 
-    address, 
-    currentStatus,
-    role : "driver"
-  })
+  // Buat objek driverInfo dari input
+  const driverInfo = {
+    currentStatus: currentStatus,
+    branch: branch
+  };
 
-  return newDriver;
+  // Buat user baru dengan role driver
+  const newUser = await User.create({
+    fullName,
+    email,
+    password,
+    phoneNumber,
+    address,
+    role: role || "driver", // default ke driver jika tidak ada
+    driverInfo
+  });
+  
+  return newUser;
 }
 
 const getAllUserService = async (req) => {
   const { role } = req.params;
 
-  const users = await User.find({ role: role })
+  const users = await User.find({ role: role, deletedAt: null })
+    .populate('driverInfo.branch'); // populate branch info untuk driver
 
   return users;
 }
@@ -47,7 +43,8 @@ const getAllUserService = async (req) => {
 const getOneUserService = async (req) => {
   const { id } = req.params;
 
-  const result = await User.findOne({ _id: id})
+  const result = await User.findOne({ _id: id, deletedAt: null })
+    .populate('driverInfo.branch');
 
   if (!result) throw new NotFoundError(`Tidak ada user dengan id: ${id}`);
 
@@ -56,13 +53,34 @@ const getOneUserService = async (req) => {
 
 const updateDriverService = async (req) => {
   const { id } = req.params;
-  const { fullName, email, password, phoneNumber, address, role, driverInfo, mainImage, detailImage } = req.body;
+  const { fullName, email, password, phoneNumber, address, role, currentStatus, branch, mainImage, detailImage } = req.body;
+
+  // Siapkan data update
+  const updateData = {
+    fullName,
+    email,
+    password,
+    phoneNumber,
+    address,
+    role
+  };
+
+  // Jika ada data driver info, update juga
+  if (currentStatus || branch) {
+    updateData.driverInfo = {};
+    if (currentStatus) updateData.driverInfo.currentStatus = currentStatus;
+    if (branch) updateData.driverInfo.branch = branch;
+  }
+
+  // Tambahkan image jika ada
+  if (mainImage) updateData.mainImage = mainImage;
+  if (detailImage) updateData.detailImage = detailImage;
 
   const result = await User.findOneAndUpdate(
-    { _id: id },
-    { fullName, email, password, phoneNumber, address, role, driverInfo, mainImage, detailImage },
+    { _id: id, deletedAt: null },
+    updateData,
     { new: true, runValidators: true}
-  );
+  ).populate('driverInfo.branch');
 
   if (!result) throw new NotFoundError(`Tidak ada user dengan id ${id}`);
 
@@ -74,6 +92,7 @@ const deleteUserService = async (req) => {
 
   const result = await User.findOne({
       _id: id,
+      deletedAt: null
   });
 
   if (!result) throw new NotFoundError(`Tidak ada user dengan id ${id}`);
