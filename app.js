@@ -6,6 +6,7 @@ const customerRoutes = require("./app/api/v1/customer/router");
 const branchRoutes = require("./app/api/v1/branch/router");
 const vehicleRoutes = require("./app/api/v1/vehicle/router")
 const userRouters = require("./app/api/v1/users/router")
+const rentalRoutes = require("./app/api/v1/rental/router")
 
 const app = express();
 const v1 = "/api/v1";
@@ -30,6 +31,7 @@ app.use(v1, customerRoutes);
 app.use(cms, branchRoutes);
 app.use(cms, vehicleRoutes);
 app.use(cms, userRouters);
+app.use(cms, rentalRoutes);
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use(notFoundMiddleware);
