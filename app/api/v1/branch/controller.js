@@ -6,7 +6,7 @@ const createBranchController = async (req, res, next) => {
     const data = req.body;
     const newBranch = await createBranchService(data);
 
-    res.status(StatusCodes.CREATED).json({message: "Cabang baru telah ditambahkan", branch: newBranch});
+    res.status(StatusCodes.CREATED).json({message: "Cabang baru telah ditambahkan", data: newBranch});
   }catch (error) {
     next(error)
   }
@@ -15,7 +15,7 @@ const createBranchController = async (req, res, next) => {
 const getAllBranchController = async (req, res, next) => {
   try {
     const branches = await getAllBranchService()
-    res.status(StatusCodes.OK).json(branches)
+    res.status(StatusCodes.OK).json({data: branches})
   } catch (error) {
     next(error)
   }
