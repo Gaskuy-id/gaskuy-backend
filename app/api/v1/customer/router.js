@@ -9,7 +9,7 @@ router.get("/vehicles", getAvailableVehiclesController);
 router.post("/customer/auth/signup", signupController);
 router.post("/customer/auth/signin", signinController);
 router.get("/customer/profile", authenticateUser, getProfileController)
-router.post("/customer/edit", authenticateUser, upload.single('image'), editProfileController)
+//router.post("/customer/edit", authenticateUser, upload.single('image'), editProfileController)
 
 router.post("/vehicles/:id/checkout", authenticateUser, checkoutController)
 
