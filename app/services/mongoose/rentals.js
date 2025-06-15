@@ -33,7 +33,7 @@ const getAllRentalByDriverService = async (driverId) => {
 }
 
 const confirmationsService = async (rentalId, confirmationType, confirmationValue) => {
-    const CONFIRMATION_FIELDS = ["vehicleTaken", "vehicleReturned", "refundRequested", "finePaid"];
+    const CONFIRMATION_FIELDS = ["vehicleTaken", "vehicleReturned", "paymentPaid", "hasFine", "finePaid"];
     if(rentalId==undefined | confirmationType==undefined | confirmationValue==undefined){
         throw new BadRequestError("Data tidak lengkap");
     }
