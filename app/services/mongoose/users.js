@@ -53,33 +53,34 @@ const getOneUserService = async (req) => {
 
 const updateDriverService = async (req) => {
   const { id } = req.params;
-  const { fullName, email, password, phoneNumber, address, role, currentStatus, branch, image } = req.body;
+  const { fullName, email, password, phoneNumber, address, role, currentStatus, branch, mainImage, detailImage } = req.body;
 
   // Siapkan data update
   const updateData = {
     fullName,
     email,
+    password,
+    currentStatus: currentStatus,
     phoneNumber,
     address,
     role
   };
 
-  // Update driverInfo jika ada perubahan
+  // Jika ada data driver info, update juga
   if (currentStatus || branch) {
-    updateData.$set = updateData.$set || {};
-    updateData.$set['driverInfo'] = updateData.$set['driverInfo'] || {};
-    
-    if (currentStatus) updateData.$set['driverInfo.currentStatus'] = currentStatus;
-    if (branch) updateData.$set['driverInfo.branch'] = branch;
+    updateData.driverInfo = {};
+    if (currentStatus) updateData.driverInfo.currentStatus = currentStatus;
+    if (branch) updateData.driverInfo.branch = branch;
   }
 
   // Tambahkan image jika ada
-  if (image) updateData.image = image;
+  if (mainImage) updateData.mainImage = mainImage;
+  if (detailImage) updateData.detailImage = detailImage;
 
   const result = await User.findOneAndUpdate(
     { _id: id, deletedAt: null },
     updateData,
-    { new: true, runValidators: true }
+    { new: true, runValidators: true}
   ).populate('driverInfo.branch');
 
   if (!result) throw new NotFoundError(`Tidak ada user dengan id ${id}`);
