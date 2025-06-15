@@ -1,10 +1,21 @@
 const Rental = require("../../api/v1/rental/model");
 const Branch = require("../../api/v1/branch/model");
 const Vehicle = require("../../api/v1/vehicle/model");
+const User = require("../../api/v1/users/model")
 const { BadRequestError, NotFoundError } = require('../../errors');
 
 const getAllRentalByBranchService = async (branchId) => {
-    const results = await Rental.find({branchId});
+    let results = await Rental.find({branchId}).populate('vehicleId').populate('driverId');
+
+    //todo: tambah ke model
+    const date = new Date()
+    results = results.map(doc => ({
+    ...doc.toObject(),
+    amount: 10000,
+    penalty: 10000,
+    transactionId: "ABC100",
+    lastMaintenance: date
+    }));
 
     return results;
 }
@@ -15,8 +26,20 @@ const getOneRentalByIdService = async (rentalId) => {
     return result;
 }
 
+const getAllRentalByDriverService = async (driverId) => {
+    const driver = await User.findById(driverId);
+
+    if (!driver || driver.driverInfo == undefined){
+        throw NotFoundError("Driver tidak ditemukan")
+    }
+
+    const results = await Rental.find({driverId: driverId});
+
+    return results;
+}
+
 const confirmationsService = async (rentalId, confirmationType, confirmationValue) => {
-    const CONFIRMATION_FIELDS = ["vehicleTaken", "vehicleReturned", "refundRequested", "finePaid"];
+    const CONFIRMATION_FIELDS = ["vehicleTaken", "vehicleReturned", "paymentPaid", "hasFine", "finePaid"];
     if(rentalId==undefined | confirmationType==undefined | confirmationValue==undefined){
         throw new BadRequestError("Data tidak lengkap");
     }
@@ -47,6 +70,7 @@ const confirmationsService = async (rentalId, confirmationType, confirmationValu
 
 module.exports = {
     getAllRentalByBranchService,
+    getAllRentalByDriverService,
     getOneRentalByIdService,
     confirmationsService
 }
