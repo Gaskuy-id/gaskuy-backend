@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
+const authRoutes = require("./app/api/v1/auth/router")
 const customerRoutes = require("./app/api/v1/customer/router");
 const branchRoutes = require("./app/api/v1/branch/router");
 const vehicleRoutes = require("./app/api/v1/vehicle/router")
@@ -27,6 +28,7 @@ const handlerErrorMiddleware = require('./app/middlewares/handler-error');
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.use(v1, authRoutes)
 app.use(v1, customerRoutes);
 app.use(cms, branchRoutes);
 app.use(cms, vehicleRoutes);
