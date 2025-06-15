@@ -60,6 +60,7 @@ const updateDriverService = async (req) => {
     fullName,
     email,
     password,
+    currentStatus: currentStatus,
     phoneNumber,
     address,
     role
