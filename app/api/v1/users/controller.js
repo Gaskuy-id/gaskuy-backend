@@ -71,6 +71,8 @@ const deleteUserController = async (req, res, next) => {
         const result = await deleteUserService(req);
         
         res.status(StatusCodes.OK).json({
+            message: "User berhasil dihapus",
+            deletedAt: result.deletedAt,
             data: result,
         })
     } catch (error) {
