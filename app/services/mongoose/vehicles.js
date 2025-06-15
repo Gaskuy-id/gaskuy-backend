@@ -1,34 +1,37 @@
 const Vehicle = require("../../api/v1/vehicle/model");
 const Branch = require("../../api/v1/branch/model");
 const { BadRequestError, NotFoundError } = require('../../errors');
-const NotFound = require("../../errors/not-found");
+const { deleteFromCloudinary } = require('../../utils/cloudinary');
+
+const getPublicIdFromUrl = (url) => {
+    const parts = url.split('/');
+    const folderAndFile = parts.slice(parts.indexOf('vehicles')).join('/');
+    return folderAndFile.split('.')[0];
+};
 
 const createVehicleService = async (data) => {
-  const { branchId } = data;
-  console.log(data)
-  
-  const branch = await Branch.findById(branchId);
+    const { branchId } = data;
+    
+    const branch = await Branch.findById(branchId);
+    if(!branch) {
+        throw new NotFoundError("Branch tidak valid");
+    }
 
-  if(!branch){
-    throw new NotFoundError("Branch tidak valid");
-  }
-
-  const newVehicle = await Vehicle.create(data);
-  
-  return newVehicle;
-}
+    const newVehicle = await Vehicle.create(data);
+    return newVehicle;
+};
 
 const getAllVehicleService = async (branchId) => {
-  const vehicles = await Vehicle.find({
-    branchId: branchId,
-    deletedAt: null
-  }).populate({
-    path: 'branchId',
-    select: '_id name city address'
-  });
+    const vehicles = await Vehicle.find({
+        branchId: branchId,
+        deletedAt: null
+    }).populate({
+        path: 'branchId',
+        select: '_id name city address'
+    });
 
-  return vehicles;
-}
+    return vehicles;
+};
 
 const getAllVehicleByCityService = async (city) => {
   const branch = await Branch.findOne({city: city});
@@ -56,40 +59,36 @@ const getOneVehicleService = async (req) => {
 }
 
 const updateVehicleService = async (req) => {
-  const { id } = req.params;
-  const { name, transmission, year, kilometer, engineCapacity, seat, luggage, branchId, ratePerHour, currentStatus, mainImage, detailImage} = req.body;
+    const { id } = req.params;
+    const data = req.body;
 
-  const result = await Vehicle.findOneAndUpdate(
-    { _id: id },
-    { name, transmission, year, kilometer, engineCapacity, seat, luggage, branchId, ratePerHour, currentStatus, mainImage},
-    { new: true, runValidators: true}
-  );
+    const vehicle = await Vehicle.findById(id);
+    if (!vehicle) throw new NotFoundError(`Tidak ada kendaraan dengan id ${id}`);
 
-  if (!result) throw new NotFoundError(`Tidak ada kendaraan dengan id ${id}`);
+    // Update vehicle data
+    const updatedVehicle = await Vehicle.findByIdAndUpdate(id, data, { new: true, runValidators: true });
 
-  return result;
-}
+    return updatedVehicle;
+};
 
 const deleteVehicleService = async (req) => {
-  const { id } = req.params;
+    const { id } = req.params;
 
-  const result = await Vehicle.findOne({
-    _id: id,
-  });
+    const vehicle = await Vehicle.findById(id);
+    if (!vehicle) throw new NotFoundError(`Tidak ada kendaraan dengan id ${id}`);
 
-  if (!result) throw new NotFoundError(`Tidak ada kendaraan dengan id ${id}`);
+    // Soft delete
+    vehicle.deletedAt = new Date();
+    await vehicle.save();
 
-  result.deletedAt = new Date();
-  await result.save();
-
-  return result;
-}
+    return vehicle;
+};
 
 module.exports = {
-  createVehicleService,
-  getAllVehicleService,
-  getAllVehicleByCityService,
-  getOneVehicleService,
-  updateVehicleService,
-  deleteVehicleService
+    createVehicleService,
+    getAllVehicleService,
+    getAllVehicleByCityService,
+    getOneVehicleService,
+    updateVehicleService,
+    deleteVehicleService
 }

@@ -1,9 +1,10 @@
 const mongoose = require("mongoose");
 
 const ConfirmationsSchema = new mongoose.Schema({
-    refundRequested: {type: Boolean},
+    paymentPaid: {type: Boolean},
     vehicleTaken: {type: Boolean},
     vehicleReturned: {type: Boolean},
+    hasFine: {type: Boolean},
     finePaid: {type: Boolean}
 }, {
     _id: false
