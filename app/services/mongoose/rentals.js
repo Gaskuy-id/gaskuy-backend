@@ -1,6 +1,7 @@
 const Rental = require("../../api/v1/rental/model");
 const Branch = require("../../api/v1/branch/model");
 const Vehicle = require("../../api/v1/vehicle/model");
+const User = require("../../api/v1/users/model")
 const { BadRequestError, NotFoundError } = require('../../errors');
 
 const getAllRentalByBranchService = async (branchId) => {
@@ -13,6 +14,18 @@ const getOneRentalByIdService = async (rentalId) => {
     const result = await Rental.findById(rentalId);
 
     return result;
+}
+
+const getAllRentalByDriverService = async (driverId) => {
+    const driver = await User.findById(driverId);
+
+    if (!driver || driver.driverInfo == undefined){
+        throw NotFoundError("Driver tidak ditemukan")
+    }
+
+    const results = await Rental.find({driverId: driverId});
+
+    return results;
 }
 
 const confirmationsService = async (rentalId, confirmationType, confirmationValue) => {
@@ -47,6 +60,7 @@ const confirmationsService = async (rentalId, confirmationType, confirmationValu
 
 module.exports = {
     getAllRentalByBranchService,
+    getAllRentalByDriverService,
     getOneRentalByIdService,
     confirmationsService
 }
