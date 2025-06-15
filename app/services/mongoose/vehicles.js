@@ -1,10 +1,11 @@
 const Vehicle = require("../../api/v1/vehicle/model");
-const Branch = require("../../api/v1/branch/model")
+const Branch = require("../../api/v1/branch/model");
 const { BadRequestError, NotFoundError } = require('../../errors');
 const NotFound = require("../../errors/not-found");
 
 const createVehicleService = async (data) => {
   const { branchId } = data;
+  console.log(data)
   
   const branch = await Branch.findById(branchId);
 
@@ -18,11 +19,13 @@ const createVehicleService = async (data) => {
 }
 
 const getAllVehicleService = async (branchId) => {
-  const vehicles = await Vehicle.find({ branchId: branchId })
-    .populate({
-      path: 'branchId',
-      select: '_id name city address'
-    });
+  const vehicles = await Vehicle.find({
+    branchId: branchId,
+    deletedAt: null
+  }).populate({
+    path: 'branchId',
+    select: '_id name city address'
+  });
 
   return vehicles;
 }
@@ -58,7 +61,7 @@ const updateVehicleService = async (req) => {
 
   const result = await Vehicle.findOneAndUpdate(
     { _id: id },
-    { name, transmission, year, kilometer, engineCapacity, seat, luggage, branchId, ratePerHour, currentStatus, image},
+    { name, transmission, year, kilometer, engineCapacity, seat, luggage, branchId, ratePerHour, currentStatus, mainImage},
     { new: true, runValidators: true}
   );
 
@@ -76,7 +79,8 @@ const deleteVehicleService = async (req) => {
 
   if (!result) throw new NotFoundError(`Tidak ada kendaraan dengan id ${id}`);
 
-  await result.deleteOne();
+  result.deletedAt = new Date();
+  await result.save();
 
   return result;
 }
