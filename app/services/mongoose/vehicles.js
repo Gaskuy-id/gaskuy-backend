@@ -57,11 +57,11 @@ const getOneVehicleService = async (req) => {
 
 const updateVehicleService = async (req) => {
   const { id } = req.params;
-  const { name, transmission, year, kilometer, engineCapacity, seat, luggage, branchId, ratePerHour, currentStatus, mainImage, detailImage} = req.body;
+  const { name, transmission, year, kilometer, engineCapacity, seat, luggage, branchId, ratePerHour, currentStatus, mainImage, detailImages} = req.body;
 
   const result = await Vehicle.findOneAndUpdate(
     { _id: id },
-    { name, transmission, year, kilometer, engineCapacity, seat, luggage, branchId, ratePerHour, currentStatus, mainImage},
+    { name, transmission, year, kilometer, engineCapacity, seat, luggage, branchId, ratePerHour, currentStatus, mainImage, detailImages},
     { new: true, runValidators: true}
   );
 
