@@ -11,11 +11,10 @@ const signupService = async ({fullName, email, password, phoneNumber, address, i
     throw new NotFoundError("Email sudah digunakan")
   }
 
-  const hashedPassword = await bcrypt.hash(password, 10);
   const newUser = User.create({
     fullName, 
     email,
-    password: hashedPassword, 
+    password, 
     phoneNumber, 
     address, 
     image, 
