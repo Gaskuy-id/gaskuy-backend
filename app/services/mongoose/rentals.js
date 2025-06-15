@@ -5,7 +5,11 @@ const User = require("../../api/v1/users/model")
 const { BadRequestError, NotFoundError } = require('../../errors');
 
 const getAllRentalByBranchService = async (branchId) => {
-    const results = await Rental.find({branchId});
+    let results = await Rental.find({branchId}).populate({path: 'vehicleId'}).populate({path: 'driverId'});
+
+    //todo: tambah ke model
+    const date = new Date()
+    results = {...results, "amount": 10000, "penalty": 10000, "transactionId": "ABC100", "lastMaintenance": date}
 
     return results;
 }
