@@ -26,6 +26,7 @@ const RentalSchema = new mongoose.Schema({
         ratePerHour: {type: Number},
         finishedAt: {type: Date},
         locationEnd: {type: String, required: true},
+        completedAt: {type: Date},
         rating: {type: Number},
         review: {type: String},
         confirmations: {type: ConfirmationsSchema}
