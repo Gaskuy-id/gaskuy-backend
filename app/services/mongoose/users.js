@@ -44,7 +44,7 @@ const getAllDriverByBranchService = async (req) => {
   const { branchId } = req.params;
 
   const drivers = await User.find({
-    'driverInfo.branch': branchId,
+    branchId: branchId,
     role: 'driver',
     deletedAt: null
   }).populate('driverInfo.branch');
