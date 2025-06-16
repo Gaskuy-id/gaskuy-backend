@@ -41,7 +41,10 @@ const signinService = async ({email, password}) => {
   }
 
   const token = createJWT({ payload: createTokenUser(user) })
-  return token;   
+  return {
+    token: token,
+    role: user.role
+  };   
 }
 
 module.exports = {

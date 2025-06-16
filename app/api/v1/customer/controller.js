@@ -2,39 +2,6 @@ const { StatusCodes } = require('http-status-codes');
 const { signupService, signinService } = require("../../../services/mongoose/auth");
 const { checkoutService, editProfileService, getProfileService, getAvailableVehiclesService } = require("../../../services/mongoose/customers");
 
-const signupController = async (req, res, next) => {
-    try {
-        const data = req.body;
-
-        const newUser = await signupService(data)
-
-        res.status(StatusCodes.CREATED).json({
-            message: "User berhasil terdaftar",
-            data: newUser
-        });
-    } catch (error) {
-        next(error)
-    }
-}
-
-const signinController = async (req, res, next) => {
-    try {
-        const { email, password } = req.body;
-
-        const token = await signinService({
-            email,
-            password
-        })
-
-        res.status(StatusCodes.OK).json({ 
-            message: "Login berhasil", 
-            data: token
-        });
-    } catch (error) {
-        next(error)
-    }
-};
-
 const editProfileController = async (req, res, next) => {
     try {
         const _id = req.user.id;
@@ -116,8 +83,6 @@ const checkoutController = async (req, res, next) => {
 }
 
 module.exports = {
-    signupController,
-    signinController,
     getProfileController,
     editProfileController,
     checkoutController,
