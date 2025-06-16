@@ -25,7 +25,7 @@ const getAllRentalByBranchService = async (branchId) => {
         })
     }
 
-    return results;
+    return final_result;
 }
 
 const getOneRentalByIdService = async (rentalId) => {
