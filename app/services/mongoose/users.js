@@ -41,16 +41,19 @@ const getAllUserService = async (req) => {
 }
 
 const getAllDriverByBranchService = async (req) => {
-  const { branchId } = req.params;
+  const { branch } = req.params;
 
   const drivers = await User.find({
-    branchId: branchId,
+    'driverInfo.branch': branch,
     role: 'driver',
     deletedAt: null
-  }).populate('driverInfo.branch');
+  }).populate({
+    path: 'driverInfo.branch',
+    select: '_id name city address'
+  });
 
   if (drivers.length === 0) {
-    throw new NotFoundError(`Tidak ada driver ditemukan untuk branch dengan id: ${branchId}`);
+    throw new NotFoundError(`Tidak ada driver ditemukan untuk branch dengan id: ${branch}`);
   }
 
   return drivers;
