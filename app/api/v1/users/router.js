@@ -10,5 +10,4 @@ router.get("/users/branch/:branch", authenticateUser, authorizeRoles("admin"), g
 router.put("/users/:id", authenticateUser, authorizeRoles("admin"), updateDriverController);
 router.delete("/users/:id", authenticateUser, authorizeRoles("admin"), deleteUserController);
 
-
 module.exports = router;
