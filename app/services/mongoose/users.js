@@ -40,6 +40,22 @@ const getAllUserService = async (req) => {
   return users;
 }
 
+const getAllDriverByBranchService = async (req) => {
+  const { branchId } = req.params;
+
+  const drivers = await User.find({
+    'driverInfo.branch': branchId,
+    role: 'driver',
+    deletedAt: null
+  }).populate('driverInfo.branch');
+
+  if (drivers.length === 0) {
+    throw new NotFoundError(`Tidak ada driver ditemukan untuk branch dengan id: ${branchId}`);
+  }
+
+  return drivers;
+}
+
 const getOneUserService = async (req) => {
   const { id } = req.params;
 
@@ -109,5 +125,6 @@ module.exports = {
   getAllUserService,
   getOneUserService,
   updateDriverService,
-  deleteUserService
+  deleteUserService,
+  getAllDriverByBranchService
 }
