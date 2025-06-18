@@ -25,7 +25,8 @@ const checkoutService = async ({ vehicleId, customerId, withDriver, ordererName,
         if(withDriver){
             const driverCheck = await User.findOne({
                 "role": "driver",
-                "driverInfo.currentStatus": "tersedia"
+                "driverInfo.currentStatus": "tersedia",
+                "driverInfo.branch": vehicleCheck.branchId
             })
 
             if (!driverCheck){
@@ -82,26 +83,36 @@ const checkoutService = async ({ vehicleId, customerId, withDriver, ordererName,
     }
 }
 
+const checkPaymentConfirmationService = async (id) => {
+    const result = await Rental.findById(id);
+
+    console.log(result)
+
+    return result.confirmations == undefined ? false : result.confirmations.paymentPaid;
+}
+
 const getAllRentalHistoryService = async (userId) => {
-    const result = Rental.find({'customerId': userId});
+    const result = await Rental.find({customerId: userId});
+
+    // console.log()
 
     return result;
 }
 
 const getRentalHistoryDetailsService = async (_id) => {
-    const result = Rental.findById(_id);
+    const result = await Rental.findById(_id);
 
     return result;
 }
 
 const editProfileService = async (id, newData) => {
-    const result = User.findOneAndUpdate({"_id": id}, newData);
+    const result = await User.findOneAndUpdate({"_id": id}, newData);
 
     return result;
 }
 
 const getProfileService = async (id) => {
-    const result = User.findById(id);
+    const result = await User.findById(id);
 
     return result;
 }
@@ -142,6 +153,7 @@ const createRentalReview = async (_id, rating, review) => {
 
 module.exports = {
     checkoutService,
+    checkPaymentConfirmationService,
     getAllRentalHistoryService,
     getRentalHistoryDetailsService,
     editProfileService,
