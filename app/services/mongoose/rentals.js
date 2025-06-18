@@ -43,6 +43,18 @@ const getAllRentalByDriverService = async (driverId) => {
     return results;
 }
 
+const getAllRentalByCustomerService = async (customerId) => {
+    const customer = await User.findById(customerId);
+
+    if (!customer){
+        throw NotFoundError("Customer tidak ditemukan")
+    }
+
+    const results = await Rental.find({customerId: customerId});
+
+    return results;
+}
+
 const confirmationsService = async (rentalId, confirmationType, confirmationValue) => {
     const CONFIRMATION_FIELDS = ["vehicleTaken", "vehicleReturned", "paymentPaid", "hasFine", "finePaid"];
     if(rentalId==undefined | confirmationType==undefined | confirmationValue==undefined){
@@ -76,6 +88,7 @@ const confirmationsService = async (rentalId, confirmationType, confirmationValu
 module.exports = {
     getAllRentalByBranchService,
     getAllRentalByDriverService,
+    getAllRentalByCustomerService,
     getOneRentalByIdService,
     confirmationsService
 }
