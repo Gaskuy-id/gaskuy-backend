@@ -92,8 +92,25 @@ const checkPaymentConfirmationService = async (id) => {
 }
 
 const getAllRentalHistoryService = async (userId) => {
-    const result = await Rental.find({customerId: userId});
-    return result;
+    const results = await Rental.find({customerId: userId}).populate('vehicleId');
+
+    let now = new Date()
+    let final_result = []
+    for (let i=0; i< results.length; i++){
+        const result = results[i]
+        const longRent = Math.abs(result.startedAt - result.finishedAt)/36e5
+        const amount = result.vehicleId.ratePerHour * longRent
+        const end = result.completedAt==undefined ? now : result.finishedAt
+        const penalty = Math.abs(result.startedAt - end)/36e5
+
+        final_result.push({
+            ...result.toJSON(),
+            amount,
+            penalty,
+        })
+    }
+
+    return final_result;
 }
 
 const getRentalHistoryDetailsService = async (_id) => {
