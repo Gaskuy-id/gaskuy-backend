@@ -3,10 +3,24 @@ const {
     getAllUserService,
     getOneUserService,
     updateDriverService,
-    deleteUserService
+    deleteUserService,
+    getAllDriverByBranchService
 } = require('../../../services/mongoose/users');
 
 const { StatusCodes } = require('http-status-codes');
+
+
+const getAllDriverByBranchController = async (req, res, next) => {
+    try {
+        const result = await getAllDriverByBranchService(req);
+        
+        res.status(StatusCodes.OK).json({
+            data: result,
+        })
+    } catch (error) {
+        next (error);
+    }
+}
 
 // get all user by role
 // /api/v1/cms/users/:role GET
@@ -85,5 +99,6 @@ module.exports = {
     getAllUserController,
     getOneUserController,
     updateDriverController,
-    deleteUserController
+    deleteUserController,
+    getAllDriverByBranchController
 }

@@ -1,5 +1,5 @@
 const { StatusCodes } = require('http-status-codes');
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
 const Rental = require("../../api/v1/rental/model");
 const Vehicle = require("../../api/v1/vehicle/model");
@@ -11,13 +11,12 @@ const checkoutService = async ({ vehicleId, customerId, withDriver, ordererName,
     try { 
         session.startTransaction();
 
+        const transactionId = Array.from({length: 6}, () => 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'[Math.floor(Math.random() * 36)]).join('');
         const vehicleCheck = await Vehicle.findById(vehicleId);
         
         if(!vehicleCheck || vehicleCheck.currentStatus != "tersedia"){
             throw new NotFoundError("Kendaraan sudah tidak tersedia"); 
         }
-
-        
 
         vehicleCheck.currentStatus = "tidak tersedia";
         await vehicleCheck.save( {session} );
@@ -26,17 +25,18 @@ const checkoutService = async ({ vehicleId, customerId, withDriver, ordererName,
         if(withDriver){
             const driverCheck = await User.findOne({
                 "role": "driver",
-                "driverInfo.currentAvailability": "tersedia"
+                "driverInfo.currentStatus": "tersedia"
             })
 
             if (!driverCheck){
                 throw new NotFoundError("Sopir sedang tidak tersedia");
             }
 
-            driverCheck.driverInfo.currentAvailability = "bekerja";
+            driverCheck.driverInfo.currentStatus = "bekerja";
             await driverCheck.save( {session} );
 
             result = await Rental.create([{
+                transactionId: transactionId,
                 customerId,
                 vehicleId,
                 driverId: driverCheck._id,
@@ -54,6 +54,7 @@ const checkoutService = async ({ vehicleId, customerId, withDriver, ordererName,
 
         }else{
             result = await Rental.create([{
+                transactionId: transactionId,
                 customerId,
                 vehicleId,
                 branchId: vehicleCheck.branchId,
@@ -82,27 +83,67 @@ const checkoutService = async ({ vehicleId, customerId, withDriver, ordererName,
 }
 
 const getAllRentalHistoryService = async (userId) => {
-    const result = Rental.find({'customerId': userId});
-
+    const result = await Rental.find({'customerId': userId});
     return result;
 }
 
 const getRentalHistoryDetailsService = async (_id) => {
-    const result = Rental.findById(_id);
-
+    const result = await Rental.findById(_id);
     return result;
 }
 
 const editProfileService = async (id, newData) => {
-    const result = User.findOneAndUpdate({"_id": id}, newData);
+    try {
+        // Only allow specific fields to be updated for customer profile
+        const allowedFields = ['fullName', 'phoneNumber', 'address', 'image'];
+        const updateData = {};
+        
+        // Filter only allowed fields
+        allowedFields.forEach(field => {
+            if (newData[field] !== undefined) {
+                updateData[field] = newData[field];
+            }
+        });
 
-    return result;
+        // Validate that we have at least one field to update
+        if (Object.keys(updateData).length === 0) {
+            throw new BadRequestError("Tidak ada data yang diupdate");
+        }
+
+        const result = await User.findOneAndUpdate(
+            { "_id": id }, 
+            updateData,
+            { new: true, runValidators: true }
+        );
+
+        if (!result) {
+            throw new NotFoundError("User tidak ditemukan");
+        }
+
+        return result;
+    } catch (error) {
+        if (error.name === 'ValidationError') {
+            throw new BadRequestError(error.message);
+        }
+        throw error;
+    }
 }
 
 const getProfileService = async (id) => {
-    const result = User.findById(id);
+    try {
+        const result = await User.findById(id);
+        
+        if (!result) {
+            throw new NotFoundError("User tidak ditemukan");
+        }
 
-    return result;
+        return result;
+    } catch (error) {
+        if (error.name === 'CastError') {
+            throw new BadRequestError("ID user tidak valid");
+        }
+        throw error;
+    }
 }
 
 const getAvailableVehiclesService = async (city, currentStatus, passengerCount) => {
@@ -120,9 +161,9 @@ const getAvailableVehiclesService = async (city, currentStatus, passengerCount) 
         },
         {
             $match: {
-            "branch.city": city,
-            seat: { $gte: Number(passengerCount) },
-            "currentStatus": currentStatus
+                "branch.city": city,
+                seat: { $gte: Number(passengerCount) },
+                "currentStatus": currentStatus
             }
         }
     ]);
@@ -131,12 +172,16 @@ const getAvailableVehiclesService = async (city, currentStatus, passengerCount) 
 }
 
 const createRentalReview = async (_id, rating, review) => {
-    rental.findOneAndUpdate(
+    const result = await Rental.findOneAndUpdate(
         {_id: _id}, 
         {$set: {
             rating: rating,
             review: review
-        }})
+        }},
+        { new: true }
+    );
+    
+    return result;
 }
 
 module.exports = {
@@ -145,5 +190,6 @@ module.exports = {
     getRentalHistoryDetailsService,
     editProfileService,
     getProfileService,
-    getAvailableVehiclesService
-}
+    getAvailableVehiclesService,
+    createRentalReview
+};
