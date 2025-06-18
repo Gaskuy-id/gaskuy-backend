@@ -65,8 +65,11 @@ const updateVehicleService = async (req) => {
     const vehicle = await Vehicle.findById(id);
     if (!vehicle) throw new NotFoundError(`Tidak ada kendaraan dengan id ${id}`);
 
+    const date = new Date()
+    const lastMaintenance = (vehicle.currentStatus != 'maintenance' && data.currentStatus == 'maintenance') ? date : vehicle.lastMaintenance
+
     // Update vehicle data
-    const updatedVehicle = await Vehicle.findByIdAndUpdate(id, data, { new: true, runValidators: true });
+    const updatedVehicle = await Vehicle.findByIdAndUpdate(id, {...data, lastMaintenance: lastMaintenance}, { new: true, runValidators: true });
 
     return updatedVehicle;
 };

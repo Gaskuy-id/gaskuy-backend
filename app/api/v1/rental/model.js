@@ -11,6 +11,7 @@ const ConfirmationsSchema = new mongoose.Schema({
 })
 
 const RentalSchema = new mongoose.Schema({
+        transactionId: {type: String, required: true},
         customerId: {type: mongoose.Schema.Types.ObjectId, ref: "User", required: true},
         driverId: {type: mongoose.Schema.Types.ObjectId, ref: "User"},    
         vehicleId: {type: mongoose.Schema.Types.ObjectId, ref: "Vehicle", required: true},
@@ -26,6 +27,7 @@ const RentalSchema = new mongoose.Schema({
         ratePerHour: {type: Number},
         finishedAt: {type: Date},
         locationEnd: {type: String, required: true},
+        completedAt: {type: Date},
         rating: {type: Number},
         review: {type: String},
         confirmations: {type: ConfirmationsSchema}

@@ -7,17 +7,22 @@ const { BadRequestError, NotFoundError } = require('../../errors');
 const getAllRentalByBranchService = async (branchId) => {
     let results = await Rental.find({branchId}).populate('vehicleId').populate('driverId');
 
-    //todo: tambah ke model
-    const date = new Date()
-    results = results.map(doc => ({
-    ...doc.toObject(),
-    amount: 10000,
-    penalty: 10000,
-    transactionId: "ABC100",
-    lastMaintenance: date
-    }));
+    let final_result = []
+    for (let i=0; i< results.length; i++){
+        const result = results[i]
+        const longRent = Math.abs(result.startedAt - result.finishedAt)/36e5
+        const amount = result.vehicleId.ratePerHour * longRent
+        const end = result.completedAt==undefined ? now : result.finishedAt
+        const penalty = Math.abs(result.startedAt - end)/36e5
 
-    return results;
+        final_result.push({
+            ...result.toJSON(),
+            amount,
+            penalty,
+        })
+    }
+
+    return final_result;
 }
 
 const getOneRentalByIdService = async (rentalId) => {
