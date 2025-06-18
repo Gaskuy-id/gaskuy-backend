@@ -12,6 +12,7 @@ const VehicleSchema = new mongoose.Schema({
   ratePerHour: {type: Number, required: true},
   currentStatus: { type: String, enum: ["tersedia", "tidak tersedia", "maintenance"], default: "tersedia" },
   lastMaintenance: { type: Date },
+  fuel: { type: String },
   mainImage: { type: String },
   detailImages: [{ type: String }],
   deletedAt: { type: Date, default: null }
