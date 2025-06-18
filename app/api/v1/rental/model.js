@@ -11,6 +11,7 @@ const ConfirmationsSchema = new mongoose.Schema({
 })
 
 const RentalSchema = new mongoose.Schema({
+        transactionId: {type: String, required: true},
         customerId: {type: mongoose.Schema.Types.ObjectId, ref: "User", required: true},
         driverId: {type: mongoose.Schema.Types.ObjectId, ref: "User"},    
         vehicleId: {type: mongoose.Schema.Types.ObjectId, ref: "Vehicle", required: true},

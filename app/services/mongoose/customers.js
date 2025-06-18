@@ -11,13 +11,12 @@ const checkoutService = async ({ vehicleId, customerId, withDriver, ordererName,
     try { 
         session.startTransaction();
 
+        const transactionId = Array.from({length: 6}, () => 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'[Math.floor(Math.random() * 36)]).join('');
         const vehicleCheck = await Vehicle.findById(vehicleId);
         
         if(!vehicleCheck || vehicleCheck.currentStatus != "tersedia"){
             throw new NotFoundError("Kendaraan sudah tidak tersedia"); 
         }
-
-        
 
         vehicleCheck.currentStatus = "tidak tersedia";
         await vehicleCheck.save( {session} );
@@ -26,17 +25,18 @@ const checkoutService = async ({ vehicleId, customerId, withDriver, ordererName,
         if(withDriver){
             const driverCheck = await User.findOne({
                 "role": "driver",
-                "driverInfo.currentAvailability": "tersedia"
+                "driverInfo.currentStatus": "tersedia"
             })
 
             if (!driverCheck){
                 throw new NotFoundError("Sopir sedang tidak tersedia");
             }
 
-            driverCheck.driverInfo.currentAvailability = "bekerja";
+            driverCheck.driverInfo.currentStatus = "bekerja";
             await driverCheck.save( {session} );
 
             result = await Rental.create([{
+                transactionId: transactionId,
                 customerId,
                 vehicleId,
                 driverId: driverCheck._id,
@@ -54,6 +54,7 @@ const checkoutService = async ({ vehicleId, customerId, withDriver, ordererName,
 
         }else{
             result = await Rental.create([{
+                transactionId: transactionId,
                 customerId,
                 vehicleId,
                 branchId: vehicleCheck.branchId,

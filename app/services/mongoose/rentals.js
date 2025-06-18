@@ -8,7 +8,6 @@ const getAllRentalByBranchService = async (branchId) => {
     let results = await Rental.find({branchId}).populate('vehicleId').populate('driverId');
 
     let final_result = []
-    const now = new Date()
     for (let i=0; i< results.length; i++){
         const result = results[i]
         const longRent = Math.abs(result.startedAt - result.finishedAt)/36e5
@@ -20,8 +19,6 @@ const getAllRentalByBranchService = async (branchId) => {
             ...result.toJSON(),
             amount,
             penalty,
-            transactionId: "ABC123",
-            lastMaintenance: now
         })
     }
 
