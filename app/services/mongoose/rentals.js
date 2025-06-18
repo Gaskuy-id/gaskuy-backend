@@ -8,6 +8,7 @@ const getAllRentalByBranchService = async (branchId) => {
     let results = await Rental.find({branchId}).populate('vehicleId').populate('driverId');
 
     let final_result = []
+    let now = new Date()
     for (let i=0; i< results.length; i++){
         const result = results[i]
         const longRent = Math.abs(result.startedAt - result.finishedAt)/36e5
@@ -38,9 +39,37 @@ const getAllRentalByDriverService = async (driverId) => {
         throw NotFoundError("Driver tidak ditemukan")
     }
 
-    const results = await Rental.find({driverId: driverId});
+    const results = await Rental.find({driverId: driverId}).populate('vehicleId');
 
     return results;
+}
+
+const getAllRentalByCustomerService = async (customerId) => {
+    const customer = await User.findById(customerId);
+
+    if (!customer){
+        throw NotFoundError("Customer tidak ditemukan")
+    }
+
+    const results = await Rental.find({customerId: customerId}).populate('vehicleId').populate('driverId');
+
+    let now = new Date()
+    let final_result = []
+    for (let i=0; i< results.length; i++){
+        const result = results[i]
+        const longRent = Math.abs(result.startedAt - result.finishedAt)/36e5
+        const amount = result.vehicleId.ratePerHour * longRent
+        const end = result.completedAt==undefined ? now : result.finishedAt
+        const penalty = Math.abs(result.startedAt - end)/36e5
+
+        final_result.push({
+            ...result.toJSON(),
+            amount,
+            penalty,
+        })
+    }
+
+    return final_result;
 }
 
 const confirmationsService = async (rentalId, confirmationType, confirmationValue) => {
@@ -76,6 +105,7 @@ const confirmationsService = async (rentalId, confirmationType, confirmationValu
 module.exports = {
     getAllRentalByBranchService,
     getAllRentalByDriverService,
+    getAllRentalByCustomerService,
     getOneRentalByIdService,
     confirmationsService
 }
