@@ -69,6 +69,20 @@ const uploadMiddleware = (fields) => {
                     }
                 }
 
+                if (req.files?.['image']) {
+                    console.log('Processing profile image...');
+                    const imageFile = req.files['image'][0];
+
+                    try {
+                        const result = await uploadToCloudinary(imageFile.buffer, 'customers/profile');
+                        console.log('Profile image uploaded:', result.secure_url);
+                        req.body.image = result.secure_url;
+                    } catch (uploadError) {
+                        console.error('Profile image upload failed:', uploadError);
+                        return next(new BadRequestError('Gagal mengupload gambar profil'));
+                    }
+                }
+
                 next();
             } catch (error) {
                 console.error('Upload middleware error:', error);

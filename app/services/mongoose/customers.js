@@ -1,5 +1,5 @@
 const { StatusCodes } = require('http-status-codes');
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
 const Rental = require("../../api/v1/rental/model");
 const Vehicle = require("../../api/v1/vehicle/model");
@@ -93,28 +93,66 @@ const checkPaymentConfirmationService = async (id) => {
 
 const getAllRentalHistoryService = async (userId) => {
     const result = await Rental.find({customerId: userId});
-
-    // console.log()
-
     return result;
 }
 
 const getRentalHistoryDetailsService = async (_id) => {
     const result = await Rental.findById(_id);
-
     return result;
 }
 
 const editProfileService = async (id, newData) => {
-    const result = await User.findOneAndUpdate({"_id": id}, newData);
+    try {
+        // Only allow specific fields to be updated for customer profile
+        const allowedFields = ['fullName', 'phoneNumber', 'address', 'image'];
+        const updateData = {};
+        
+        // Filter only allowed fields
+        allowedFields.forEach(field => {
+            if (newData[field] !== undefined) {
+                updateData[field] = newData[field];
+            }
+        });
 
-    return result;
+        // Validate that we have at least one field to update
+        if (Object.keys(updateData).length === 0) {
+            throw new BadRequestError("Tidak ada data yang diupdate");
+        }
+
+        const result = await User.findOneAndUpdate(
+            { "_id": id }, 
+            updateData,
+            { new: true, runValidators: true }
+        );
+
+        if (!result) {
+            throw new NotFoundError("User tidak ditemukan");
+        }
+
+        return result;
+    } catch (error) {
+        if (error.name === 'ValidationError') {
+            throw new BadRequestError(error.message);
+        }
+        throw error;
+    }
 }
 
 const getProfileService = async (id) => {
-    const result = await User.findById(id);
+    try {
+        const result = await User.findById(id);
+        
+        if (!result) {
+            throw new NotFoundError("User tidak ditemukan");
+        }
 
-    return result;
+        return result;
+    } catch (error) {
+        if (error.name === 'CastError') {
+            throw new BadRequestError("ID user tidak valid");
+        }
+        throw error;
+    }
 }
 
 const getAvailableVehiclesService = async (city, currentStatus, passengerCount) => {
@@ -132,9 +170,9 @@ const getAvailableVehiclesService = async (city, currentStatus, passengerCount) 
         },
         {
             $match: {
-            "branch.city": city,
-            seat: { $gte: Number(passengerCount) },
-            "currentStatus": currentStatus
+                "branch.city": city,
+                seat: { $gte: Number(passengerCount) },
+                "currentStatus": currentStatus
             }
         }
     ]);
@@ -143,12 +181,16 @@ const getAvailableVehiclesService = async (city, currentStatus, passengerCount) 
 }
 
 const createRentalReview = async (_id, rating, review) => {
-    rental.findOneAndUpdate(
+    const result = await Rental.findOneAndUpdate(
         {_id: _id}, 
         {$set: {
             rating: rating,
             review: review
-        }})
+        }},
+        { new: true }
+    );
+    
+    return result;
 }
 
 module.exports = {
@@ -158,5 +200,6 @@ module.exports = {
     getRentalHistoryDetailsService,
     editProfileService,
     getProfileService,
-    getAvailableVehiclesService
-}
+    getAvailableVehiclesService,
+    createRentalReview
+};

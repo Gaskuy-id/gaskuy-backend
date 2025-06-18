@@ -28,7 +28,7 @@ const UserSchema = new mongoose.Schema({
   },
   driverInfo: { type: DriverInfoSchema },
   deletedAt: { type: Date, default: null },
-  image: String,
+  image: {type: String},
 }, { timestamps: true });
 
 UserSchema.pre("save", async function (next) {
