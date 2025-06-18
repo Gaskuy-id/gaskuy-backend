@@ -2,7 +2,7 @@
 const express = require("express");
 
 const router = express.Router();
-const { getProfileController, checkoutController, checkPaymentConfirmationController, getAvailableVehiclesController, getAllRentalHistoryController } = require("./controller");
+const { getProfileController, checkoutController, editProfileController, checkPaymentConfirmationController, getAvailableVehiclesController, getAllRentalHistoryController } = require("./controller");
 const upload = require("../../../middlewares/upload");
 const { authenticateUser } = require("../../../middlewares/auth");
 const uploadMiddleware = require("../../../middlewares/upload");
