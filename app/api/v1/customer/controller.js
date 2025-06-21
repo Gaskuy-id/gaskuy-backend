@@ -1,5 +1,15 @@
 const { StatusCodes } = require('http-status-codes');
-const { checkoutService, checkPaymentConfirmationService, getReviewByVehicleId, cancelRentalService, editProfileService, getProfileService, getAvailableVehiclesService, getAllRentalHistoryService } = require("../../../services/mongoose/customers");
+const { 
+    checkoutService, 
+    checkPaymentConfirmationService, 
+    getReviewByVehicleIdService, 
+    cancelRentalService, 
+    editProfileService, 
+    getProfileService, 
+    getAvailableVehiclesService, 
+    getAllRentalHistoryService,
+    createRentalReviewService
+} = require("../../../services/mongoose/customers");
 
 const editProfileController = async (req, res, next) => {
     try {
@@ -108,6 +118,35 @@ const getAvailableVehiclesController = async (req, res, next) => {
     }
 };
 
+const createRentalReviewController = async (req, res, next) => {
+    try{
+        const { review, rating } = req.body;
+        const { id } = req.params.id;
+
+        const result = await createRentalReviewService(id, rating, review);
+
+        res.status(StatusCodes.OK).json({
+            data: result
+        })
+    }catch{
+
+    }
+}
+
+const getReviewByVehicleIdController = async (req, res, next) => {
+    try {
+        const { vehicleId } = req.params.id;
+
+        const result = getReviewByVehicleIdService(vehicleId);
+
+        res.status(StatusCodes.OK).json({
+            data: result
+        })
+    }catch(error){
+        next(error)
+    }
+}
+
 const checkoutController = async (req, res, next) => {
     try {
         const customerId = req.user.id;
@@ -158,5 +197,7 @@ module.exports = {
     checkoutController,
     cancelRentalController,
     checkPaymentConfirmationController,
-    getAvailableVehiclesController
+    getAvailableVehiclesController,
+    createRentalReviewController,
+    getReviewByVehicleIdController
 };

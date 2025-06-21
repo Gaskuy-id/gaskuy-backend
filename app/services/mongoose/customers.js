@@ -47,9 +47,9 @@ const checkoutService = async ({ vehicleId, customerId, withDriver, ordererName,
                 ordererName,
                 ordererPhone,
                 ordererEmail,
-                startedAt,
+                startedAt: DateTime.fromISO(startedAt, {zone: 'UTC+7'}).toUTC().toJSDate(),
                 locationStart,
-                finishedAt,
+                finishedAt: DateTime.fromISO(finishedAt, {zone: 'UTC+7'}).toUTC().toJSDate(),
                 locationEnd
             }],
                 { session }
@@ -200,7 +200,7 @@ const getAvailableVehiclesService = async (city, currentStatus, passengerCount) 
     return vehicles;
 }
 
-const createRentalReview = async (_id, rating, review) => {
+const createRentalReviewService = async (_id, rating, review) => {
     const result = await Rental.findOneAndUpdate(
         {_id: _id}, 
         {$set: {
@@ -213,7 +213,7 @@ const createRentalReview = async (_id, rating, review) => {
     return result;
 }
 
-const getReviewByVehicleId = async (vehicleId) => {
+const getReviewByVehicleIdService = async (vehicleId) => {
     const results = await Rental.find({ vehicleId: vehicleId, rating: { $exists: true } })
         .select('rating review customerId')
         .populate('customerId');
@@ -268,6 +268,6 @@ module.exports = {
     getProfileService,
     getAvailableVehiclesService,
     cancelRentalService,
-    getReviewByVehicleId,
-    createRentalReview
+    getReviewByVehicleIdService,
+    createRentalReviewService
 };
