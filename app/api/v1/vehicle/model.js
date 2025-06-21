@@ -10,7 +10,7 @@ const VehicleSchema = new mongoose.Schema({
   luggage: {type: Number, required: true},
   branchId: {type: mongoose.Schema.Types.ObjectId, ref: "Branch", required: true},
   ratePerHour: {type: Number, required: true},
-  currentStatus: { type: String, enum: ["tersedia", "tidak tersedia", "maintenance"], default: "tersedia" },
+  currentStatus: { type: String, enum: ["tersedia", "tidak tersedia", "maintenance"], default: "tersedia", required: true },
   lastMaintenance: { type: Date },
   fuel: { type: String },
   mainImage: { type: String },
