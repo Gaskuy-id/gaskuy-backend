@@ -24,7 +24,7 @@ const RentalSchema = new mongoose.Schema({
         cancelledAt: {type: Date},
         startedAt: {type: Date},
         locationStart: {type: String, required: true},
-        ratePerHour: {type: Number},
+        ratePerHour: {type: Number, required: true},
         finishedAt: {type: Date},
         locationEnd: {type: String, required: true},
         completedAt: {type: Date},

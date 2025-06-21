@@ -1,14 +1,15 @@
 const Rental = require("../../api/v1/rental/model");
 const Branch = require("../../api/v1/branch/model");
 const Vehicle = require("../../api/v1/vehicle/model");
-const User = require("../../api/v1/users/model")
+const User = require("../../api/v1/users/model");
+const { DateTime } = require("luxon")
 const { BadRequestError, NotFoundError } = require('../../errors');
 
 const getAllRentalByBranchService = async (branchId) => {
     let results = await Rental.find({branchId}).populate('vehicleId').populate('driverId');
 
-    let final_result = []
-    let now = new Date()
+    let final_result = [];
+    let now = DateTime.now().setZone('UTC+7');
     for (let i=0; i< results.length; i++){
         const result = results[i]
         const longRent = Math.abs(result.startedAt - result.finishedAt)/36e5
