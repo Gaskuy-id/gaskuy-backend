@@ -47,7 +47,7 @@ const getAllRentalByDriverService = async (driverId) => {
         throw NotFoundError("Driver tidak ditemukan")
     }
 
-    const results = await Rental.find({driverId: driverId}).populate('vehicleId');
+    const results = await Rental.find({driverId: driverId, "confirmations.paymentPaid": true}).populate('vehicleId');
 
     return results;
 }
