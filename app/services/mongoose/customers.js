@@ -78,8 +78,10 @@ const checkoutService = async ({ vehicleId, customerId, withDriver, ordererName,
 
         await session.commitTransaction();
 
+        result = result[0];
+
         return {
-            ...result,
+            ...result.toObject(),
             amount: vehicleCheck.ratePerHour * (Math.round((finishedAtDate-startedAtDate) / (1000 * 60 * 60)))
         }
 
