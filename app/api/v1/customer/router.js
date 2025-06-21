@@ -2,7 +2,17 @@
 const express = require("express");
 
 const router = express.Router();
-const { getProfileController, checkoutController, cancelRentalController, editProfileController, checkPaymentConfirmationController, getAvailableVehiclesController, getAllRentalHistoryController } = require("./controller");
+const { 
+    getProfileController, 
+    checkoutController, 
+    cancelRentalController, 
+    editProfileController, 
+    checkPaymentConfirmationController, 
+    getAvailableVehiclesController, 
+    getAllRentalHistoryController,
+    createRentalReviewController,
+    getReviewByVehicleIdController
+} = require("./controller");
 const upload = require("../../../middlewares/upload");
 const { authenticateUser } = require("../../../middlewares/auth");
 const uploadMiddleware = require("../../../middlewares/upload");
@@ -10,8 +20,9 @@ const uploadMiddleware = require("../../../middlewares/upload");
 router.get("/vehicles", getAvailableVehiclesController);
 router.get("/customer/profile", authenticateUser, getProfileController)
 router.get("/customer/history", authenticateUser, getAllRentalHistoryController)
-router.post("/customer/checkConfirmation", authenticateUser, checkPaymentConfirmationController)
+router.post("/rental/checkConfirmation", authenticateUser, checkPaymentConfirmationController)
 router.post("/rental/:id/cancel", authenticateUser, cancelRentalController);
+router.post("/rental/:id/review", authenticateUser)
 
 router.post(
   "/customer/edit",
