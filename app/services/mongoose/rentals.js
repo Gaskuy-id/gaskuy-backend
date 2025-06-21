@@ -4,25 +4,32 @@ const Vehicle = require("../../api/v1/vehicle/model");
 const User = require("../../api/v1/users/model");
 const { DateTime } = require("luxon")
 const { BadRequestError, NotFoundError } = require('../../errors');
+const { default: mongoose } = require("mongoose");
 
 const getAllRentalByBranchService = async (branchId) => {
-    let results = await Rental.find({branchId}).populate('vehicleId').populate('driverId');
+    let results = await Rental.find({branchId}).populate('vehicleId', 'name').populate('driverId', 'fullName phoneNumber');
 
-    let final_result = [];
-    let now = DateTime.now().setZone('UTC+7');
-    for (let i=0; i< results.length; i++){
-        const result = results[i]
-        const longRent = Math.abs(result.startedAt - result.finishedAt)/36e5
-        const amount = result.vehicleId.ratePerHour * longRent
-        const end = result.completedAt==undefined ? now : result.completedAt
-        const penalty = Math.max(end-now)/36e5
+    const now = new Date()
+    const final_result = results.map(result => {
+        const msRent = Math.max(result.finishedAt.getTime() - result.startedAt.getTime(), 0);
+        const longRentHours = Math.round(msRent / 36e5);
+        let amount = result.ratePerHour * longRentHours;
+        const end = result.completedAt ? result.completedAt : now;
+        const msLate = Math.max(end.getTime() - result.finishedAt.getTime(), 0);
+        const lateHours = Math.round(msLate / 36e5);
+        let penalty = lateHours * result.ratePerHour;
 
-        final_result.push({
+        if(result.driverId != undefined){
+            amount += longRentHours * 25000
+            penalty += lateHours * 25000
+        }
+
+        return {
             ...result.toJSON(),
             amount,
             penalty,
-        })
-    }
+        };
+    });
 
     return final_result;
 }
