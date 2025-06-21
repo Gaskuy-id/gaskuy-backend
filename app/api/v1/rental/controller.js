@@ -31,6 +31,18 @@ const getRentalController = async (req, res, next) => {
     }
 }
 
+const getRentalByDriverController = async (req, res, next) => {
+    try {
+        const driverId = req.user.id
+
+        result = await getAllRentalByDriverService(driverId);
+
+        res.status(StatusCodes.OK).json({data: result});
+    } catch(error) {
+
+    }
+}
+
 const confirmationsController = async (req, res, next) => {
     try {
         const { id } = req.params;
@@ -48,5 +60,6 @@ const confirmationsController = async (req, res, next) => {
 
 module.exports = {
   getRentalController,
+  getRentalByDriverController,
   confirmationsController,
 }

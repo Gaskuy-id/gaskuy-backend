@@ -25,7 +25,8 @@ const checkoutService = async ({ vehicleId, customerId, withDriver, ordererName,
         if(withDriver){
             const driverCheck = await User.findOne({
                 "role": "driver",
-                "driverInfo.currentStatus": "tersedia"
+                "driverInfo.currentStatus": "tersedia",
+                "driverInfo.branch": vehicleCheck.branchId
             })
 
             if (!driverCheck){
@@ -82,9 +83,34 @@ const checkoutService = async ({ vehicleId, customerId, withDriver, ordererName,
     }
 }
 
+const checkPaymentConfirmationService = async (id) => {
+    const result = await Rental.findById(id);
+
+    console.log(result)
+
+    return result.confirmations == undefined ? false : result.confirmations.paymentPaid;
+}
+
 const getAllRentalHistoryService = async (userId) => {
-    const result = await Rental.find({'customerId': userId});
-    return result;
+    const results = await Rental.find({customerId: userId}).populate('vehicleId');
+
+    let now = new Date()
+    let final_result = []
+    for (let i=0; i< results.length; i++){
+        const result = results[i]
+        const longRent = Math.abs(result.startedAt - result.finishedAt)/36e5
+        const amount = result.vehicleId.ratePerHour * longRent
+        const end = result.completedAt==undefined ? now : result.finishedAt
+        const penalty = Math.abs(result.startedAt - end)/36e5
+
+        final_result.push({
+            ...result.toJSON(),
+            amount,
+            penalty,
+        })
+    }
+
+    return final_result;
 }
 
 const getRentalHistoryDetailsService = async (_id) => {
@@ -186,6 +212,7 @@ const createRentalReview = async (_id, rating, review) => {
 
 module.exports = {
     checkoutService,
+    checkPaymentConfirmationService,
     getAllRentalHistoryService,
     getRentalHistoryDetailsService,
     editProfileService,

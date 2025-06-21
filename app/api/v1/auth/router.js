@@ -5,7 +5,7 @@ const { signinController, signupController } = require("./controller");
 const upload = require("../../../middlewares/upload");
 const { authenticateUser } = require("../../../middlewares/auth");
 
-router.post("/customer/auth/signup", signupController);
-router.post("/customer/auth/signin", signinController);
+router.post("/auth/signup", signupController);
+router.post("/auth/signin", signinController);
 
 module.exports = router;
