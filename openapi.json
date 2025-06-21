@@ -1,0 +1,613 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "API Specification (Gaskuy-RESTful API)",
+        "description": "OpenAPI untuk website (RESTFul API) rental mobil Gaskuy",
+        "version": "1.0.0",
+        "termsOfService": "https://gaskuy.com/terms",
+        "contact": {
+            "name": "Gaskuy Support",
+            "url": "https://gasskuy.com",
+            "email": "gasskuy@gmail.com"
+        },
+        "license": {
+            "name": "MIT",
+            "url": "https://opensource.org/license/mit/"
+        }
+    },
+    "servers": [
+        {
+            "description": "Gaskuy API Server",
+            "url": "http://localhost:3000/api/v1",
+            "variables": {
+                "environment": {
+                    "description": "Environment for the API server",
+                    "default": "dev",
+                    "enum": [
+                        "dev",
+                        "qa",
+                        "prod"
+                    ]
+                }
+            }
+        }
+    ],
+    "paths": {
+        "/cms/vehicle": {
+            "post": {
+                "summary": "Create a new vehicle",
+                "description": "Membuat data mobil baru",
+                "security": [{
+                    "bearerAuth": []
+                }],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "name",
+                                    "transmission",
+                                    "year",
+                                    "kilometer",
+                                    "engineCapacity",
+                                    "seat",
+                                    "luggage",
+                                    "branchId",
+                                    "ratePerHour",
+                                    "currentStatus",
+                                    "mainImage",
+                                    "detailImages"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Toyota Avanza"
+                                    },
+                                    "transmission": {
+                                        "type": "string",
+                                        "enum": ["manual", "automatic"],
+                                        "example": "automatic"
+                                    },
+                                    "year": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "example": 2020
+                                    },
+                                    "kilometer": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "example": 15000
+                                    },
+                                    "engineCapacity": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "example": 3000
+                                    },
+                                    "seat": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "example": 7
+                                    },
+                                    "luggage": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "example": 20
+                                    },
+                                    "fuel": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "example": 50
+                                    },
+                                    "branchId": {
+                                        "type": "string",
+                                        "example": "23582164936636"
+                                    },
+                                    "ratePerHour": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "example": 100000
+                                    },
+                                    "currentStatus": {
+                                        "type": "string",
+                                        "enum": ["tersedia", "tidak tersedia", "maintenance"],
+                                        "default": "tersedia",
+                                        "example": "tersedia"
+                                    },
+                                    "mainImage": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "detailImages": {
+                                        "type": "array",
+                                        "minItems": 4,
+                                        "maxItems": 4,
+                                        "items": {
+                                            "type": "string",
+                                            "format": "binary"
+                                        }
+                                    }
+                                }
+                            },
+                            "example": {
+                                "name": "Toyota Avanza",
+                                "transmission": "automatic",
+                                "year": 2020,
+                                "kilometer": 15000,
+                                "engineCapacity": 3000,
+                                "seat": 7,
+                                "luggage": 20,
+                                "fuel": 50,
+                                "branchId": "23582164936636",
+                                "ratePerHour": 100000,
+                                "currentStatus": "tersedia",
+                                "mainImage": "image.jpg",
+                                "detailImages": [
+                                    "image1.jpg",
+                                    "image2.jpg",
+                                    "image3.jpg",
+                                    "image4.jpg"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Vehicle created successfully",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Vehicle created successfully",
+                                    "data": {
+                                        "id": "64d5f7a9e6a3f3b9c7a8b5c2",
+                                        "name": "Toyota Avanza",
+                                        "transmission": "automatic",
+                                        "year": 2020,
+                                        "kilometer": 15000,
+                                        "engineCapacity": 3000,
+                                        "seat": 7,
+                                        "luggage": 20,
+                                        "fuel": 50,
+                                        "branchId": "23582164936636",
+                                        "ratePerHour": 100000,
+                                        "currentStatus": "tersedia",
+                                        "mainImage": "uploads/vehicles/avanza.jpg",
+                                        "detailImages": [
+                                            "uploads/vehicles/avanza1.jpg",
+                                            "uploads/vehicles/avanza2.jpg",
+                                            "uploads/vehicles/avanza3.jpg",
+                                            "uploads/vehicles/avanza4.jpg"
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Validation error",
+                                    "errors": [
+                                        "name is required",
+                                        "detailImages must contain exactly 4 items"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Unauthorized: Missing or invalid token"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/cms/vehicle/{id}": {
+            "get": {
+                "summary": "Get one vehicle by id",
+                "description": "Melihat data mobil berdasarkan id",
+                "security": [{
+                    "bearerAuth": []
+                }],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "description": "ID mobil yang akan dilihat",
+                        "schema": {
+                            "type": "string",
+                            "example": "64d5f7a9e6a3f3b9c7a8b5c2"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "id": "64d5f7a9e6a3f3b9c7a8b5c2",
+                                    "name": "Toyota Avanza",
+                                    "transmission": "automatic",
+                                    "year": 2020,
+                                    "kilometer": 15000,
+                                    "engineCapacity": 3000,
+                                    "seat": 7,
+                                    "luggage": 20,
+                                    "fuel": 50,
+                                    "branchId": "23582164936636",
+                                    "ratePerHour": 100000,
+                                    "currentStatus": "tersedia",
+                                    "mainImage": "uploads/vehicles/avanza.jpg",
+                                    "detailImages": [
+                                        "uploads/vehicles/avanza1.jpg",
+                                        "uploads/vehicles/avanza2.jpg",
+                                        "uploads/vehicles/avanza3.jpg",
+                                        "uploads/vehicles/avanza4.jpg"
+                                    ],
+                                    "createdAt": "2023-08-11T10:00:00Z",
+                                    "updatedAt": "2023-08-11T10:00:00Z"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Unauthorized: Missing or invalid token"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Vehicle not found",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Vehicle not found with id: 64d5f7a9e6a3f3b9c7a8b5c2"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "summary": "Update a vehicle by id",
+                "description": "memperbarui data mobil berdasarkan id",
+                "security": [{
+                    "bearerAuth": []
+                }],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "description": "ID mobil yang akan diperbarui",
+                        "schema": {
+                            "type": "string",
+                            "example": "64d5f7a9e6a3f3b9c7a8b5c2"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Toyota Avanza"
+                                    },
+                                    "transmission": {
+                                        "type": "string",
+                                        "enum": ["manual", "automatic"],
+                                        "example": "automatic"
+                                    },
+                                    "year": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "example": 2020
+                                    },
+                                    "kilometer": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "example": 15000
+                                    },
+                                    "engineCapacity": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "example": 3000
+                                    },
+                                    "seat": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "example": 7
+                                    },
+                                    "luggage": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "example": 20
+                                    },
+                                    "fuel": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "example": 50
+                                    },
+                                    "branchId": {
+                                        "type": "string",
+                                        "example": "23582164936636"
+                                    },
+                                    "ratePerHour": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "example": 100000
+                                    },
+                                    "currentStatus": {
+                                        "type": "string",
+                                        "enum": ["tersedia", "tidak tersedia", "maintenance"],
+                                        "default": "tersedia",
+                                        "example": "tersedia"
+                                    },
+                                    "mainImage": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "detailImages": {
+                                        "type": "array",
+                                        "minItems": 4,
+                                        "maxItems": 4,
+                                        "items": {
+                                            "type": "string",
+                                            "format": "binary"
+                                        }
+                                    }
+                                }
+                            },
+                            "example": {
+                                "name": "Toyota Avanza Facelift",
+                                "kilometer": 20000,
+                                "currentStatus": "tersedia"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Vehicle updated successfully",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Vehicle updated successfully",
+                                    "data": {
+                                        "id": "64d5f7a9e6a3f3b9c7a8b5c2",
+                                        "name": "Toyota Avanza Facelift",
+                                        "transmission": "automatic",
+                                        "year": 2020,
+                                        "kilometer": 20000,
+                                        "engineCapacity": 3000,
+                                        "seat": 7,
+                                        "luggage": 20,
+                                        "fuel": 50,
+                                        "branchId": "23582164936636",
+                                        "ratePerHour": 100000,
+                                        "currentStatus": "tersedia",
+                                        "mainImage": "uploads/vehicles/avanza.jpg",
+                                        "detailImages": [
+                                            "uploads/vehicles/avanza1.jpg",
+                                            "uploads/vehicles/avanza2.jpg",
+                                            "uploads/vehicles/avanza3.jpg",
+                                            "uploads/vehicles/avanza4.jpg"
+                                        ],
+                                        "createdAt": "2023-08-11T10:00:00Z",
+                                        "updatedAt": "2023-08-11T14:30:00Z"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Validation error",
+                                    "errors": [
+                                        "year must be a valid year",
+                                        "detailImages must contain exactly 4 items"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Unauthorized: Missing or invalid token"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Vehicle not found",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Vehicle not found with id: 64d5f7a9e6a3f3b9c7a8b5c2"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Delete a vehicle by id",
+                "description": "Menghapus data mobil berdasarkan id",
+                "security": [{
+                    "bearerAuth": []
+                }],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "description": "ID mobil yang akan dihapus",
+                        "schema": {
+                            "type": "string",
+                            "example": "64d5f7a9e6a3f3b9c7a8b5c2"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Vehicle deleted successfully"
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Unauthorized: Missing or invalid token"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Vehicle not found",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Vehicle not found with id: 64d5f7a9e6a3f3b9c7a8b5c2"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/cms/vehicle/branch/{branchId}": {
+            "get": {
+                "summary": "Get all vehicles by branch id",
+                "description": "Melihat semua data mobil berdasarkan id cabang",
+                "security": [{
+                    "bearerAuth": []
+                }],
+                "parameters": [
+                    {
+                        "name": "branchId",
+                        "in": "path",
+                        "required": true,
+                        "description": "ID cabang tempat mobil yang akan dilihat",
+                        "schema": {
+                            "type": "string",
+                            "example": "23582164936636"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "example": [
+                                    {
+                                        "id": "64d5f7a9e6a3f3b9c7a8b5c2",
+                                        "name": "Toyota Avanza",
+                                        "transmission": "automatic",
+                                        "year": 2020,
+                                        "kilometer": 15000,
+                                        "engineCapacity": 3000,
+                                        "seat": 7,
+                                        "luggage": 20,
+                                        "fuel": 50,
+                                        "branchId": "23582164936636",
+                                        "ratePerHour": 100000,
+                                        "currentStatus": "tersedia",
+                                        "mainImage": "uploads/vehicles/avanza.jpg",
+                                        "detailImages": [
+                                            "uploads/vehicles/avanza1.jpg",
+                                            "uploads/vehicles/avanza2.jpg",
+                                            "uploads/vehicles/avanza3.jpg",
+                                            "uploads/vehicles/avanza4.jpg"
+                                        ],
+                                        "createdAt": "2023-08-11T10:00:00Z",
+                                        "updatedAt": "2023-08-11T10:00:00Z"
+                                    },
+                                    {
+                                        "id": "64d5f7a9e6a3f3b9c7a8b5c3",
+                                        "name": "Honda Brio",
+                                        "transmission": "manual",
+                                        "year": 2021,
+                                        "kilometer": 10000,
+                                        "engineCapacity": 1200,
+                                        "seat": 5,
+                                        "luggage": 15,
+                                        "fuel": 40,
+                                        "branchId": "23582164936636",
+                                        "ratePerHour": 80000,
+                                        "currentStatus": "tersedia",
+                                        "mainImage": "uploads/vehicles/brio.jpg",
+                                        "detailImages": [
+                                            "uploads/vehicles/brio1.jpg",
+                                            "uploads/vehicles/brio2.jpg",
+                                            "uploads/vehicles/brio3.jpg",
+                                            "uploads/vehicles/brio4.jpg"
+                                        ],
+                                        "createdAt": "2023-08-12T09:00:00Z",
+                                        "updatedAt": "2023-08-12T09:00:00Z"
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Unauthorized: Missing or invalid token"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Branch not found",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Branch not found with id: 23582164936636"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT",
+                "description": "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\""
+            }
+        }
+    }
+}
