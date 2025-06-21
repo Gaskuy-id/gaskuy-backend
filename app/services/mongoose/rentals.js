@@ -59,23 +59,29 @@ const getAllRentalByCustomerService = async (customerId) => {
         throw NotFoundError("Customer tidak ditemukan")
     }
 
-    const results = await Rental.find({customerId: customerId}).populate('vehicleId').populate('driverId');
+    let results = await Rental.find({customerId}).populate('vehicleId', 'name').populate('driverId', 'fullName phoneNumber');
 
-    let now = new Date()
-    let final_result = []
-    for (let i=0; i< results.length; i++){
-        const result = results[i]
-        const longRent = Math.abs(result.startedAt - result.finishedAt)/36e5
-        const amount = result.vehicleId.ratePerHour * longRent
-        const end = result.completedAt==undefined ? now : result.finishedAt
-        const penalty = Math.abs(result.startedAt - end)/36e5
+    const now = new Date()
+    const final_result = results.map(result => {
+        const msRent = Math.max(result.finishedAt.getTime() - result.startedAt.getTime(), 0);
+        const longRentHours = Math.round(msRent / 36e5);
+        let amount = result.ratePerHour * longRentHours;
+        const end = result.completedAt ? result.completedAt : now;
+        const msLate = Math.max(end.getTime() - result.finishedAt.getTime(), 0);
+        const lateHours = Math.round(msLate / 36e5);
+        let penalty = lateHours * result.ratePerHour;
 
-        final_result.push({
+        if(result.driverId != undefined){
+            amount += longRentHours * 25000
+            penalty += lateHours * 25000
+        }
+
+        return {
             ...result.toJSON(),
             amount,
             penalty,
-        })
-    }
+        };
+    });
 
     return final_result;
 }
@@ -105,6 +111,19 @@ const confirmationsService = async (rentalId, confirmationType, confirmationValu
         ...(rental.confirmations || {}),
         [confirmationType]: confirmationValue,
     };
+
+    if(confirmationType == "vehicleReturned" || (confirmationType == "paymentPaid" && confirmationValue == false)){
+        const vehicle = await Vehicle.findById(rental.vehicleId);
+        const driver = await User.findById(rental.driverId);
+
+        vehicle.currentStatus = "tersedia";
+        driver.driverInfo.currentStatus = "tersedia";
+        rental.completedAt = new Date()
+
+        await vehicle.save();
+        await driver.save();
+    }
+
     await rental.save()
 
     return rental;
