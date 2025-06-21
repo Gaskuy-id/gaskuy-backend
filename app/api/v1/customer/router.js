@@ -22,7 +22,7 @@ router.get("/customer/profile", authenticateUser, getProfileController)
 router.get("/customer/history", authenticateUser, getAllRentalHistoryController)
 router.post("/rental/checkConfirmation", authenticateUser, checkPaymentConfirmationController)
 router.post("/rental/:id/cancel", authenticateUser, cancelRentalController);
-router.post("/rental/:id/review", authenticateUser)
+router.post("/rental/:id/review", authenticateUser, createRentalReviewController)
 
 router.post(
   "/customer/edit",
