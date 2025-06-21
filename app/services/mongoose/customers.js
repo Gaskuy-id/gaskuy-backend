@@ -13,6 +13,8 @@ const checkoutService = async ({ vehicleId, customerId, withDriver, ordererName,
         session.startTransaction();
 
         const transactionId = Array.from({length: 6}, () => 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'[Math.floor(Math.random() * 36)]).join('');
+        let startedAtDate = new Date(startedAt);
+        let finishedAtDate = new Date(finishedAt);
         const vehicleCheck = await Vehicle.findById(vehicleId);
         
         if(!vehicleCheck || vehicleCheck.currentStatus != "tersedia"){
@@ -76,7 +78,10 @@ const checkoutService = async ({ vehicleId, customerId, withDriver, ordererName,
 
         await session.commitTransaction();
 
-        return result
+        return {
+            ...result,
+            amount: vehicleCheck.ratePerHour * (Math.round((finishedAtDate-startedAtDate) / (1000 * 60 * 60)))
+        }
 
     } catch (error){
         await session.abortTransaction();
