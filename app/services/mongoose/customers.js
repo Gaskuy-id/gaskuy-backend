@@ -5,6 +5,7 @@ const Rental = require("../../api/v1/rental/model");
 const Vehicle = require("../../api/v1/vehicle/model");
 const User = require("../../api/v1/users/model");
 const { BadRequestError, NotFoundError } = require('../../errors');
+const { DateTime } = require('luxon');
 
 const checkoutService = async ({ vehicleId, customerId, withDriver, ordererName, ordererPhone, ordererEmail, startedAt, locationStart, finishedAt, locationEnd }) => {
     const session = await mongoose.startSession();
@@ -212,6 +213,52 @@ const createRentalReview = async (_id, rating, review) => {
     return result;
 }
 
+const getReviewByVehicleId = async (vehicleId) => {
+    const results = await Rental.find({ vehicleId: vehicleId, rating: { $exists: true } })
+        .select('rating review customerId')
+        .populate('customerId');
+
+    return results;
+}
+
+const cancelRentalService = async (rentalId) => {
+    const session = await mongoose.startSession();
+    try {
+        session.startTransaction();
+
+        const rental = await Rental.findById(rentalId).session(session);
+        if (!rental) {
+            throw new NotFoundError("Rental tidak ditemukan");
+        }
+
+        if (rental.completedAt) {
+            throw new BadRequestError("Rental sudah selesai, tidak bisa dibatalkan");
+        }
+
+        // Update vehicle status
+        const vehicle = await Vehicle.findById(rental.vehicleId).session(session);
+        if (!vehicle) {
+            throw new NotFoundError("Kendaraan tidak ditemukan");
+        }
+        vehicle.currentStatus = "tersedia";
+        await vehicle.save({ session });
+
+        // Update rental status
+        rental.completedAt = DateTime.now().setZone('UTC+7').toISO();
+        rental.cancelledAt = DateTime.now().setZone('UTC+7').toISO();
+
+        await rental.save({ session });
+
+        await session.commitTransaction();
+        return rental;
+    } catch (error) {
+        await session.abortTransaction();
+        throw error;
+    } finally {
+        session.endSession();
+    }
+}
+
 module.exports = {
     checkoutService,
     checkPaymentConfirmationService,
@@ -220,5 +267,7 @@ module.exports = {
     editProfileService,
     getProfileService,
     getAvailableVehiclesService,
+    cancelRentalService,
+    getReviewByVehicleId,
     createRentalReview
 };

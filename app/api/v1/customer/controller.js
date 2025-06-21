@@ -1,5 +1,5 @@
 const { StatusCodes } = require('http-status-codes');
-const { checkoutService, checkPaymentConfirmationService, editProfileService, getProfileService, getAvailableVehiclesService, getAllRentalHistoryService } = require("../../../services/mongoose/customers");
+const { checkoutService, checkPaymentConfirmationService, getReviewByVehicleId, cancelRentalService, editProfileService, getProfileService, getAvailableVehiclesService, getAllRentalHistoryService } = require("../../../services/mongoose/customers");
 
 const editProfileController = async (req, res, next) => {
     try {
@@ -137,11 +137,26 @@ const checkoutController = async (req, res, next) => {
     }
 };
 
+const cancelRentalController = async (req, res, next) => {
+    try {
+        const rentalId = req.params.id;
+        const result = await cancelRentalService(rentalId);
+
+        res.status(StatusCodes.OK).json({
+            message: "Rental berhasil dibatalkan",
+            data: result
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
 module.exports = {
     getProfileController,
     editProfileController,
     getAllRentalHistoryController,
     checkoutController,
+    cancelRentalController,
     checkPaymentConfirmationController,
     getAvailableVehiclesController
 };
