@@ -14,8 +14,8 @@ const getAllRentalByBranchService = async (branchId) => {
         const result = results[i]
         const longRent = Math.abs(result.startedAt - result.finishedAt)/36e5
         const amount = result.vehicleId.ratePerHour * longRent
-        const end = result.completedAt==undefined ? now : result.finishedAt
-        const penalty = Math.abs(result.startedAt - end)/36e5
+        const end = result.completedAt==undefined ? now : result.completedAt
+        const penalty = Math.max(end-now)/36e5
 
         final_result.push({
             ...result.toJSON(),
