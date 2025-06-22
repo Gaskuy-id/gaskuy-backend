@@ -212,7 +212,7 @@ const createRentalReviewService = async (_id, rating, review) => {
 const getReviewByVehicleIdService = async (vehicleId) => {
     let results = await Rental.find({ vehicleId: vehicleId, rating: { $exists: true } })
         .select('rating review reviewAddedAt customerId')
-        .populate('customerId', '_id fullName');
+        .populate('customerId', '_id fullName image');
 
     results = results.map(result => {
         let rawDate = result.reviewAddedAt
