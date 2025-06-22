@@ -259,8 +259,9 @@ const cancelRentalService = async (rentalId) => {
         }
         
         // Update rental status
-        rental.completedAt = DateTime.now().setZone('UTC+7').toISO();
-        rental.cancelledAt = DateTime.now().setZone('UTC+7').toISO();
+        const dateNow = new Date()
+        rental.completedAt = dateNow
+        rental.cancelledAt = dateNow
 
         await rental.save({ session });
 
