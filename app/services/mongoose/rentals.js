@@ -1,10 +1,7 @@
 const Rental = require("../../api/v1/rental/model");
-const Branch = require("../../api/v1/branch/model");
 const Vehicle = require("../../api/v1/vehicle/model");
 const User = require("../../api/v1/users/model");
-const { DateTime } = require("luxon")
 const { BadRequestError, NotFoundError } = require('../../errors');
-const { default: mongoose } = require("mongoose");
 
 const getAllRentalByBranchService = async (branchId) => {
     let results = await Rental.find({branchId}).populate('vehicleId', 'name').populate('driverId', 'fullName phoneNumber');
@@ -112,7 +109,7 @@ const confirmationsService = async (rentalId, confirmationType, confirmationValu
         [confirmationType]: confirmationValue,
     };
 
-    if(confirmationType == "vehicleReturned" || (confirmationType == "paymentPaid" && confirmationValue == false)){
+    if(confirmationType == "vehicleReturned" | (confirmationType == "paymentPaid" && confirmationValue == false)){
         const vehicle = await Vehicle.findById(rental.vehicleId);
         const driver = await User.findById(rental.driverId);
 
