@@ -118,7 +118,13 @@ const confirmationsService = async (rentalId, confirmationType, confirmationValu
 
         vehicle.currentStatus = "tersedia";
         driver.driverInfo.currentStatus = "tersedia";
-        rental.completedAt = new Date()
+
+        const dateNow = new Date()
+        rental.completedAt = dateNow
+
+        if(confirmationType == "paymentPaid"){
+            rental.cancelledAt = dateNow
+        }
 
         await vehicle.save();
         await driver.save();
