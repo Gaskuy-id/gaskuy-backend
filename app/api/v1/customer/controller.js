@@ -136,9 +136,9 @@ const createRentalReviewController = async (req, res, next) => {
 
 const getReviewByVehicleIdController = async (req, res, next) => {
     try {
-        const { vehicleId } = req.params.id;
+        const { id } = req.params;
 
-        const result = getReviewByVehicleIdService(vehicleId);
+        const result =await getReviewByVehicleIdService(id);
 
         res.status(StatusCodes.OK).json({
             data: result

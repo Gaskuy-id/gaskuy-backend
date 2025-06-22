@@ -195,11 +195,13 @@ const getAvailableVehiclesService = async (city, currentStatus, passengerCount) 
 }
 
 const createRentalReviewService = async (_id, rating, review) => {
+    let now = new Date()
     const result = await Rental.findOneAndUpdate(
         {_id: _id}, 
         {$set: {
             rating: rating,
-            review: review
+            review: review,
+            reviewAddedAt: now
         }},
         { new: true }
     );
@@ -208,10 +210,20 @@ const createRentalReviewService = async (_id, rating, review) => {
 }
 
 const getReviewByVehicleIdService = async (vehicleId) => {
-    const results = await Rental.find({ vehicleId: vehicleId, rating: { $exists: true } })
-        .select('rating review customerId')
-        .populate('customerId');
+    let results = await Rental.find({ vehicleId: vehicleId, rating: { $exists: true } })
+        .select('rating review reviewAddedAt customerId')
+        .populate('customerId', '_id fullName');
 
+    results = results.map(result => {
+        let rawDate = result.reviewAddedAt
+        let localizeDate = DateTime.fromJSDate(rawDate).setZone('Asia/Bangkok').toFormat('yyyy-MM-dd HH:mm')
+        console.log(localizeDate)
+
+        return {
+            ...result.toJSON(),
+            reviewAddedAt: localizeDate
+        }
+    })
     return results;
 }
 

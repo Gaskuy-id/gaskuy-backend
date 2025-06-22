@@ -30,6 +30,7 @@ const RentalSchema = new mongoose.Schema({
         completedAt: {type: Date},
         rating: {type: Number},
         review: {type: String},
+        reviewAddedAt: {type: Date},
         confirmations: {type: ConfirmationsSchema}
     },
         { timestamps: true }
