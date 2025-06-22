@@ -249,6 +249,15 @@ const cancelRentalService = async (rentalId) => {
         vehicle.currentStatus = "tersedia";
         await vehicle.save({ session });
 
+        if(rental.driverId){
+            const driver = await Driver.findById(rental.driverId).session(session);
+            if (!driver) {
+                throw new NotFoundError("Driver tidak valid")
+            }
+            driver.driverInfo.currentStatus = "tersedia";
+            await driver.save({ session });
+        }
+        
         // Update rental status
         rental.completedAt = DateTime.now().setZone('UTC+7').toISO();
         rental.cancelledAt = DateTime.now().setZone('UTC+7').toISO();
