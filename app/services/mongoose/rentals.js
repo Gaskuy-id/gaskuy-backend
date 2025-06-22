@@ -95,6 +95,10 @@ const confirmationsService = async (rentalId, confirmationType, confirmationValu
         throw new BadRequestError("Rental tidak valid");
     }
 
+    if (rental.cancelledAt) {
+        throw new BadRequestError("Rental tidak dapat dikonfirmasi, Rental sudah dibatalkan");
+    }
+
     if (!CONFIRMATION_FIELDS.includes(confirmationType)) {
         throw new BadRequestError("Tipe konfirmasi tidak valid");
     }
