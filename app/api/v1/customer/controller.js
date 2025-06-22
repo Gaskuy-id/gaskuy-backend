@@ -126,6 +126,7 @@ const createRentalReviewController = async (req, res, next) => {
         const result = await createRentalReviewService(id, rating, review);
 
         res.status(StatusCodes.OK).json({
+            message: "Review berhasil ditambahkan",
             data: result
         })
     }catch (error){
