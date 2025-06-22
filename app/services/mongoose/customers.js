@@ -13,18 +13,38 @@ const checkoutService = async ({ vehicleId, customerId, withDriver, ordererName,
         session.startTransaction();
 
         const transactionId = Array.from({length: 6}, () => 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'[Math.floor(Math.random() * 36)]).join('');
-        let startedAtDate = new Date(startedAt);
-        let finishedAtDate = new Date(finishedAt);
+        const startedAtDate = DateTime.fromISO(startedAt.replace(", ", "T"), { zone: 'UTC+7' }).toJSDate();
+        const finishedAtDate = DateTime.fromISO(finishedAt.replace(", ", "T"), { zone: 'UTC+7' }).toJSDate();
         const vehicleCheck = await Vehicle.findById(vehicleId);
-        
+        console.log(startedAt, startedAtDate, finishedAt, finishedAtDate)
+
         if(!vehicleCheck || vehicleCheck.currentStatus != "tersedia"){
             throw new NotFoundError("Kendaraan sudah tidak tersedia"); 
         }
 
+        console.log(startedAtDate, finishedAtDate)
+
         vehicleCheck.currentStatus = "tidak tersedia";
+        let ratePerHour = vehicleCheck.ratePerHour;
+        let hours = Math.round((finishedAtDate-startedAtDate) / (1000 * 60 * 60))
+        let amount = ratePerHour * hours
         await vehicleCheck.save( {session} );
 
-        let result = undefined
+        const rentalData = {
+            transactionId,
+            customerId,
+            vehicleId,
+            branchId: vehicleCheck.branchId,
+            ratePerHour: vehicleCheck.ratePerHour,
+            ordererName,
+            ordererPhone,
+            ordererEmail,
+            startedAt: startedAtDate,
+            locationStart,
+            finishedAt: finishedAtDate,
+            locationEnd
+        };
+
         if(withDriver){
             const driverCheck = await User.findOne({
                 "role": "driver",
@@ -36,53 +56,20 @@ const checkoutService = async ({ vehicleId, customerId, withDriver, ordererName,
                 throw new NotFoundError("Sopir sedang tidak tersedia");
             }
 
+            amount += 25000 * hours
+
             driverCheck.driverInfo.currentStatus = "bekerja";
             await driverCheck.save( {session} );
-
-            result = await Rental.create([{
-                transactionId: transactionId,
-                customerId,
-                vehicleId,
-                driverId: driverCheck._id,
-                branchId: vehicleCheck.branchId,
-                ratePerHour: vehicleCheck.ratePerHour,
-                ordererName,
-                ordererPhone,
-                ordererEmail,
-                startedAt: DateTime.fromISO(startedAt, {zone: 'UTC+7'}).toUTC().toJSDate(),
-                locationStart,
-                finishedAt: DateTime.fromISO(finishedAt, {zone: 'UTC+7'}).toUTC().toJSDate(),
-                locationEnd
-            }],
-                { session }
-            )
-
-        }else{
-            result = await Rental.create([{
-                transactionId: transactionId,
-                customerId,
-                vehicleId,
-                branchId: vehicleCheck.branchId,
-                ordererName,
-                ordererPhone,
-                ratePerHour: vehicleCheck.ratePerHour,
-                ordererEmail,
-                startedAt,
-                locationStart,
-                finishedAt,
-                locationEnd
-            }], 
-            {session}
-        )
+            rentalData.driverId = driverCheck._id;
         }
+
+        const result = await Rental.create([rentalData], { session });
 
         await session.commitTransaction();
 
-        result = result[0];
-
         return {
-            ...result.toObject(),
-            amount: vehicleCheck.ratePerHour * (Math.round((finishedAtDate-startedAtDate) / (1000 * 60 * 60)))
+            ...result[0].toObject(),
+            amount: amount
         }
 
     } catch (error){
