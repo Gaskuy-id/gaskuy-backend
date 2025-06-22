@@ -36,6 +36,7 @@
         "/cms/vehicle": {
             "post": {
                 "summary": "Create a new vehicle",
+                "tags": ["vehicle"],
                 "description": "Membuat data mobil baru",
                 "security": [{
                     "bearerAuth": []
@@ -215,6 +216,7 @@
         "/cms/vehicle/{id}": {
             "get": {
                 "summary": "Get one vehicle by id",
+                "tags": ["vehicle"],
                 "description": "Melihat data mobil berdasarkan id",
                 "security": [{
                     "bearerAuth": []
@@ -286,6 +288,7 @@
             },
             "put": {
                 "summary": "Update a vehicle by id",
+                "tags": ["vehicle"],
                 "description": "memperbarui data mobil berdasarkan id",
                 "security": [{
                     "bearerAuth": []
@@ -458,6 +461,7 @@
             },
             "delete": {
                 "summary": "Delete a vehicle by id",
+                "tags": ["vehicle"],
                 "description": "Menghapus data mobil berdasarkan id",
                 "security": [{
                     "bearerAuth": []
@@ -504,6 +508,7 @@
         "/cms/vehicle/branch/{branchId}": {
             "get": {
                 "summary": "Get all vehicles by branch id",
+                "tags": ["vehicle"],
                 "description": "Melihat semua data mobil berdasarkan id cabang",
                 "security": [{
                     "bearerAuth": []
@@ -592,6 +597,654 @@
                             "application/json": {
                                 "example": {
                                     "message": "Branch not found with id: 23582164936636"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/cms/users/": {
+            "post": {
+                "summary": "Create a new driver",
+                "tags": ["users"],
+                "description": "Membuat data driver baru",
+                "security": [{
+                    "bearerAuth": []
+                }],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "fullName",
+                                    "email",
+                                    "phoneNumber",
+                                    "password",
+                                    "address",
+                                    "branchId",
+                                    "role"
+                                ],
+                                "properties": {
+                                    "fullName": {
+                                        "type": "string",
+                                        "example": "driver"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "driver@gmail.com"
+                                    },
+                                    "phoneNumber": {
+                                        "type": "string",
+                                        "example": "+1234567890"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "driver123"
+                                    },
+                                    "address": {
+                                        "type": "string",
+                                        "example": "Jalan Raya No. 123"
+                                    },
+                                    "branchId": {
+                                        "type": "string",
+                                        "example": "23582164936636"
+                                    },
+                                    "role": {
+                                        "type": "string",
+                                        "enum": ["driver", "admin"],
+                                        "default": "driver",
+                                        "example": "driver"
+                                    },
+                                    "currentStatus": {
+                                        "type": "string",
+                                        "enum": ["tersedia", "bekerja", "tidak tersedia"],
+                                        "default": "tersedia",
+                                        "example": "tersedia"
+                                    }
+                                }
+                            },
+                            "example": {
+                                "fullName": "Driver Name",
+                                "email": "driver@gmail.com",
+                                "phoneNumber": "+1234567890",
+                                "password": "driver123",
+                                "address": "Jalan Raya No. 123",
+                                "branchId": "23582164936636",
+                                "role": "driver",
+                                "currentStatus": "tersedia"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Driver created successfully",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "driver created successfully",
+                                    "data": {
+                                        "id": "64d5f7a9e6a3f3b9c7a8b5c2",
+                                        "name": "Driver Name",
+                                        "email": "driver@gmail.com",
+                                        "phoneNumber": "+1234567890",
+                                        "password": "driver123",
+                                        "address": "Jalan Raya No. 123",
+                                        "branchId": "23582164936636",
+                                        "role": "driver",
+                                        "currentStatus": "tersedia"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Validation error",
+                                    "errors": [
+                                        "fullName is required",
+                                        "email must be a valid email address",
+                                        "phoneNumber is required",
+                                        "password must be at least 6 characters long",
+                                        "address is required",
+                                        "branchId is required",
+                                        "role must be either 'driver' or 'admin'"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Unauthorized: Missing or invalid token"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/cms/users/role/{role}": {
+            "get": {
+                "summary": "Get all users by role",
+                "tags": ["users"],
+                "description": "API untuk mengambil semua data user berdasarkan role",
+                "security": [{
+                    "bearerAuth": []
+                }],
+                "parameters": [
+                    {
+                        "name": "role",
+                        "in": "path",
+                        "required": true,
+                        "description": "Peran pengguna yang akan dilihat (driver atau admin)",
+                        "schema": {
+                            "type": "string",
+                            "enum": ["driver", "admin"],
+                            "example": "driver"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "example": [
+                                    {
+                                        "id": "64d5f7a9e6a3f3b9c7a8b5c2",
+                                        "fullName": "Driver Name",
+                                        "email": "drivergmail.com",
+                                        "phoneNumber": "+1234567890",
+                                        "address": "Jalan Raya No. 123",
+                                        "branchId": "23582164936636",
+                                        "role": "driver",
+                                        "currentStatus": "tersedia",
+                                        "createdAt": "2023-08-11T10:00:00Z",
+                                        "updatedAt": "2023-08-11T10:00:00Z"
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Validation error",
+                                    "errors": [
+                                        "role is required"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Unauthorized: Missing or invalid token"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/cms/users/{id}": {
+            "get": {
+                "summary": "Get one user by id",
+                "tags": ["users"],
+                "description": "API untuk mengambil data user berdasarkan id",
+                "security": [{
+                    "bearerAuth": []
+                }],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "description": "ID pengguna yang akan dilihat",
+                        "schema": {
+                            "type": "string",
+                            "example": "64d5f7a9e6a3f3b9c7a8b5c2"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation / User updated successfully",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "getUser": {
+                                        "summary": "Get user by id",
+                                        "value": {
+                                            "id": "64d5f7a9e6a3f3b9c7a8b5c2",
+                                            "fullName": "Driver Name",
+                                            "email": "driver@gmail.com",
+                                            "phoneNumber": "+1234567890",
+                                            "address": "Jalan Raya No. 123",
+                                            "branchId": "23582164936636",
+                                            "role": "driver",
+                                            "currentStatus": "tersedia",
+                                            "createdAt": "2023-08-11T10:00:00Z",
+                                            "updatedAt": "2023-08-11T10:00:00Z"
+                                        }
+                                    },
+                                    "updateUser": {
+                                        "summary": "User updated successfully",
+                                        "value": {
+                                            "message": "User updated successfully",
+                                            "data": {
+                                                "id": "64d5f7a9e6a3f3b9c7a8b5c2",
+                                                "fullName": "Driver Name Updated",
+                                                "email": "driver.updated@gmail.com"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Unauthorized: Missing or invalid token"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "User not found with id: 64d5f7a9e6a3f3b9c7a8b5c2"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "An unexpected error occurred"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "summary": "Update a user by id",
+                "tags": ["users"],
+                "description": "Memperbarui data user berdasarkan id",
+                "security": [{
+                    "bearerAuth": []
+                }],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "description": "ID pengguna yang akan diperbarui",
+                        "schema": {
+                            "type": "string",
+                            "example": "64d5f7a9e6a3f3b9c7a8b5c2"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "fullName": {
+                                        "type": "string",
+                                        "example": "Driver Name Updated"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "driver.updated@gmail.com"
+                                    }
+                                },
+                                "required": ["fullName", "email"]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "User updated successfully",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "User updated successfully",
+                                    "data": {
+                                        "id": "64d5f7a9e6a3f3b9c7a8b5c2",
+                                        "fullName": "Driver Name Updated",
+                                        "email": "driver.updated@gmail.com"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Validation error",
+                                    "errors": [
+                                        "fullName is required",
+                                        "email must be a valid email address"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Unauthorized: Missing or invalid token"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "User not found with id: 64d5f7a9e6a3f3b9c7a8b5c2"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Delete a user by id",
+                "tags": ["users"],
+                "description": "Menghapus data user berdasarkan id",
+                "security": [{
+                    "bearerAuth": []
+                }],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "description": "ID pengguna yang akan dihapus",
+                        "schema": {
+                            "type": "string",
+                            "example": "64d5f7a9e6a3f3b9c7a8b5c2"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "User deleted successfully"
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Unauthorized: Missing or invalid token"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "User not found with id: 64d5f7a9e6a3f3b9c7a8b5c2"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/cms/branches/": {
+            "get": {
+                "summary": "Get all branches",
+                "tags": ["branches"],
+                "description": "API untuk mengambil semua data cabang",
+                "security": [{
+                    "bearerAuth": []
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "example": [
+                                    {
+                                        "id": "23582164936636",
+                                        "name": "Cabang Utama",
+                                        "address": "Jalan Raya No. 123",
+                                        "phoneNumber": "+1234567890",
+                                        "createdAt": "2023-08-11T10:00:00Z",
+                                        "updatedAt": "2023-08-11T10:00:00Z"
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Unauthorized: Missing or invalid token"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/cms/branch/": {
+            "post": {
+                "summary": "Create a new branch",
+                "tags": ["branches"],
+                "description": "API untuk membuat cabang baru",
+                "security": [{
+                    "bearerAuth": []
+                }],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Cabang Utama"
+                                    },
+                                    "address": {
+                                        "type": "string",
+                                        "example": "Jalan Raya No. 123"
+                                    },
+                                    "phoneNumber": {
+                                        "type": "string",
+                                        "example": "+1234567890"
+                                    }
+                                },
+                                "required": ["name", "address", "phoneNumber"]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Branch created successfully",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Branch created successfully",
+                                    "data": {
+                                        "id": "23582164936636",
+                                        "name": "Cabang Utama",
+                                        "address": "Jalan Raya No. 123",
+                                        "phoneNumber": "+1234567890",
+                                        "createdAt": "2023-08-11T10:00:00Z",
+                                        "updatedAt": null
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Invalid request payload"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Unauthorized: Missing or invalid token"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/signup": {
+            "post": {
+                "summary": "User signup",
+                "tags": ["auth"],
+                "description": "API untuk mendaftar sebagai pengguna baru",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "fullName": {
+                                        "type": "string",
+                                        "example": "Ryan"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "ryangmail.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password123"
+                                    }
+                                },
+                                "required": ["fullName", "email", "password"]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "User created successfully",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "User created successfully"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Invalid request payload"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/login": {
+            "post": {
+                "summary": "User login",
+                "tags": ["auth"],
+                "description": "API untuk login pengguna",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "ryangmail.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password123"
+                                    }
+                                },
+                                "required": ["email", "password"]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Login successful",
+                            "content": {
+                                "application/json": {
+                                    "example": {
+                                        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                                    }
+                                }
+                            }
+                        },
+                        "401": {
+                            "description": "Unauthorized",
+                            "content": {
+                                "application/json": {
+                                    "example": {
+                                        "message": "Invalid email or password"
+                                    }
                                 }
                             }
                         }

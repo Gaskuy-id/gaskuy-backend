@@ -1,13 +1,6 @@
 const Vehicle = require("../../api/v1/vehicle/model");
 const Branch = require("../../api/v1/branch/model");
-const { BadRequestError, NotFoundError } = require('../../errors');
-const { deleteFromCloudinary } = require('../../utils/cloudinary');
-
-const getPublicIdFromUrl = (url) => {
-    const parts = url.split('/');
-    const folderAndFile = parts.slice(parts.indexOf('vehicles')).join('/');
-    return folderAndFile.split('.')[0];
-};
+const { NotFoundError } = require('../../errors');
 
 const createVehicleService = async (data) => {
     const { branchId } = data;
