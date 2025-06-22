@@ -111,10 +111,13 @@ const confirmationsService = async (rentalId, confirmationType, confirmationValu
 
     if(confirmationType == "vehicleReturned" | (confirmationType == "paymentPaid" && confirmationValue == false)){
         const vehicle = await Vehicle.findById(rental.vehicleId);
-        const driver = await User.findById(rental.driverId);
-
         vehicle.currentStatus = "tersedia";
-        driver.driverInfo.currentStatus = "tersedia";
+
+        if(rental.driverId){
+            const driver = await User.findById(rental.driverId);
+            driver.driverInfo.currentStatus = "tersedia";
+            await driver.save();
+        }
 
         const dateNow = new Date()
         rental.completedAt = dateNow
@@ -124,7 +127,6 @@ const confirmationsService = async (rentalId, confirmationType, confirmationValu
         }
 
         await vehicle.save();
-        await driver.save();
     }
 
     await rental.save()
