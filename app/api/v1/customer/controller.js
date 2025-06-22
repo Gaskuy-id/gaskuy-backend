@@ -121,15 +121,15 @@ const getAvailableVehiclesController = async (req, res, next) => {
 const createRentalReviewController = async (req, res, next) => {
     try{
         const { review, rating } = req.body;
-        const { id } = req.params.id;
+        const { id } = req.params;
 
         const result = await createRentalReviewService(id, rating, review);
 
         res.status(StatusCodes.OK).json({
             data: result
         })
-    }catch{
-
+    }catch (error){
+        next(error)
     }
 }
 
