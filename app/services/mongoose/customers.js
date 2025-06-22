@@ -237,6 +237,10 @@ const cancelRentalService = async (rentalId) => {
             throw new NotFoundError("Rental tidak ditemukan");
         }
 
+        if (rental.confirmations.paymentPaid) {
+            throw new BadRequestError("Rental sudah terkonfirmasi, tidak bisa dibatalkan");
+        }
+
         if (rental.completedAt) {
             throw new BadRequestError("Rental sudah selesai, tidak bisa dibatalkan");
         }
