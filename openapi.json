@@ -18,7 +18,7 @@
     "servers": [
         {
             "description": "Gaskuy API Server",
-            "url": "http://localhost:3000/api/v1",
+            "url": "http://localhost:5000/api/v1",
             "variables": {
                 "environment": {
                     "description": "Environment for the API server",
@@ -1226,32 +1226,658 @@
                                 "required": ["email", "password"]
                             }
                         }
-                    },
-                    "responses": {
-                        "200": {
-                            "description": "Login successful",
-                            "content": {
-                                "application/json": {
-                                    "example": {
-                                        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-                                    }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Login successful",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
                                 }
                             }
-                        },
-                        "401": {
-                            "description": "Unauthorized",
-                            "content": {
-                                "application/json": {
-                                    "example": {
-                                        "message": "Invalid email or password"
-                                    }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Invalid email or password"
                                 }
                             }
                         }
                     }
                 }
             }
+        },
+        "/cms/rentals": {
+            "get": {
+                "summary": "Ambil data rental",
+                "description": "Hanya bisa diakses oleh admin. Mendukung query parameter seperti `rentalId`, `branchId`, `driverId`, atau `customerId`.",
+                "tags": ["Rental"],
+                "security": [{ "bearerAuth": [] }],
+                "parameters": [
+                {
+                    "name": "rentalId",
+                    "in": "query",
+                    "schema": { "type": "string" }
+                },
+                {
+                    "name": "branchId",
+                    "in": "query",
+                    "schema": { "type": "string" }
+                },
+                {
+                    "name": "driverId",
+                    "in": "query",
+                    "schema": { "type": "string" }
+                },
+                {
+                    "name": "customerId",
+                    "in": "query",
+                    "schema": { "type": "string" }
+                }
+                ],
+                "responses": {
+                "200": {
+                    "description": "Data rental berhasil diambil.",
+                    "content": {
+                        "application/json": {
+                            "example": {
+                                "data": [
+                                    {
+                                    "_id": "6856e88dfe0d76382cfe4123",
+                                    "transactionId": "L3P6YK",
+                                    "customerId": "6856bd41da8da836f90ce00a",
+                                    "driverId": {
+                                        "_id": "6856c7095ce76b90fc2c9bb5",
+                                        "fullName": "The Greatest Driver That's Ever Lived",
+                                        "phoneNumber": "08123456789"
+                                    },
+                                    "vehicleId": {
+                                        "_id": "6856c3b05ce76b90fc2c9ba6",
+                                        "name": "The Greatest Car That's Ever Created"
+                                    },
+                                    "branchId": "6856c30a5ce76b90fc2c9b9c",
+                                    "ordererName": "The Greatest Customer That's Ever Lived",
+                                    "ordererPhone": "081234567889",
+                                    "ordererEmail": "orderthecar@gaskuy.id",
+                                    "startedAt": "2025-06-19T17:00:00.000Z",
+                                    "locationStart": "The Greatest Building That's Ever Built",
+                                    "ratePerHour": 50000,
+                                    "finishedAt": "2025-06-21T03:00:00.000Z",
+                                    "locationEnd": "The Second Greatest Building That's Ever Built",
+                                    "createdAt": "2025-06-21T17:14:53.090Z",
+                                    "updatedAt": "2025-06-22T12:03:14.800Z",
+                                    "__v": 0,
+                                    "completedAt": "2025-06-21T02:00:00.000Z",
+                                    "rating": 5,
+                                    "review": "mobilnya agak keren",
+                                    "reviewAddedAt": "2025-06-22T12:03:14.796Z",
+                                    "amount": 2550000,
+                                    "penalty": 0
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                "401": { 
+                    "description": "Unauthorized",
+                    "content": {
+                        "application/json": {
+                            "example": {
+                                "msg": "Unauthorized to acces this route"
+                            }
+                        }
+                    }   
+                }
+                }
+            }
+        },
+        "/cms/driver/rentals": {
+            "get": {
+                "summary": "Ambil data rental untuk driver",
+                "description": "Mengambil semua data rental milik driver yang sedang login.",
+                "tags": ["Rental"],
+                "security": [{ "bearerAuth": [] }],
+                "responses": {
+                "200": {
+                    "description": "Data rental driver berhasil diambil.",
+                    "content": {
+                    "application/json": {
+                        "example": {
+                        "data": [
+                            {
+                                "_id": "685782232c83a2f62553d93d",
+                                "transactionId": "4CK76Q",
+                                "customerId": "685652bcd49fbf26780b139c",
+                                "driverId": "68565416d49fbf26780b13af",
+                                "vehicleId": {
+                                    "_id": "6856dd839f44fbf7c0bccdc8",
+                                    "name": "Toyota Avanza"
+                                },
+                                "branchId": "6856534ed49fbf26780b13a0",
+                                "ordererName": "The Greatest Customer That's Ever Lived",
+                                "ordererPhone": "08123456789",
+                                "ordererEmail": "tgctev@gmail.nah",
+                                "startedAt": "2025-06-22T03:45:00.000Z",
+                                "locationStart": "depan ITB",
+                                "ratePerHour": 100000,
+                                "finishedAt": "2025-06-23T03:45:00.000Z",
+                                "locationEnd": "belakang ITB",
+                                "createdAt": "2025-06-22T04:10:11.762Z",
+                                "updatedAt": "2025-06-22T15:45:49.577Z",
+                                "__v": 0,
+                                "confirmations": {
+                                    "paymentPaid": true,
+                                    "vehicleTaken": true
+                                }
+                            }
+                        ]
+                        }
+                    }
+                    }
+                },
+                "401": { 
+                    "description": "Unauthorized",
+                    "content": {
+                        "application/json": {
+                            "example":{
+                                "msg": "Unauthorized to acces this route"
+                            }
+                        }
+                    }
+                },
+                "403": { "description": "Forbidden" }
+                }
+            }
+        },
+        "/cms/rentals/{id}": {
+            "put": {
+                "summary": "Konfirmasi status rental",
+                "description": "Admin dapat mengonfirmasi status tertentu dari sebuah rental seperti pengambilan kendaraan atau pengembalian.",
+                "tags": ["Rental"],
+                "security": [{ "bearerAuth": [] }],
+                "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "schema": { "type": "string" }
+                }
+                ],
+                "requestBody": {
+                "required": true,
+                "content": {
+                    "application/json": {
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                        "confirmationType": {
+                            "type": "string",
+                            "enum": ["vehicleTaken", "vehicleReturned", "refundRequested", "finePaid"]
+                        },
+                        "confirmationValue": {
+                            "type": "boolean"
+                        }
+                        },
+                        "required": ["confirmationType", "confirmationValue"]
+                    },
+                    "example": {
+                        "confirmationType": "vehicleTaken",
+                        "confirmationValue": true
+                    }
+                    }
+                }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Konfirmasi berhasil dilakukan.",
+                        "content": {
+                        "application/json": {
+                            "example": {
+                                "data": {
+                                    "_id": "685782232c83a2f62553d93d",
+                                    "transactionId": "4CK76Q",
+                                    "ordererName": "The Greatest Customer That's Ever Lived",
+                                    "vehicleReturned": true,
+                                    "updatedAt": "2025-06-23T01:07:33.089Z"
+                                }
+                            }
+                        }
+                        }
+                    },
+                    "400": { 
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json":{
+                                "example":{
+                                    "msg": "Konfirmasi vehicleReturned sudah dilakukan"
+                                }
+                            }
+                        }
+                    },
+                    "401": { 
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "example":{
+                                    "msg": "Unauthorized to acces this route"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "/vehicles": {
+                "get": {
+                    "summary": "Lihat kendaraan tersedia",
+                    "tags": ["Customer"],
+                    "parameters": [
+                    {"name": "city", "in": "query", "schema": {"type": "string"}},
+                    {"name": "currentStatus", "in": "query", "schema": {"type": "string"}},
+                    {"name": "passengerCount", "in": "query", "schema": {"type": "integer"}}
+                    ],
+                    "responses": {
+                    "200": {
+                        "description": "Daftar kendaraan tersedia",
+                        "content": {"application/json": {"example": {"data": [{"_id": "v1", "seat": 4, "ratePerHour": 25000}]}}}
+                    }
+                    }
+                }
+            }
+        },
+        "/customer/profile": {
+            "get": {
+                "summary": "Lihat profil customer",
+                "tags": ["Customer"],
+                "security": [{"bearerAuth": []}],
+                "responses": {
+                "200": {
+                    "description": "Profil customer", 
+                    "content": {
+                        "application/json": {
+                            "example": {
+                                "data": {
+                                    "_id": "68565243d49fbf26780b1393",
+                                    "fullName": "The Greatest Customer That's Ever Lived",
+                                    "email": "tgctev@gaskuy.id",
+                                    "phoneNumber": "0812345678910",
+                                    "address": "Jalan Kaki",
+                                    "role": "customer",
+                                    "deletedAt": null,
+                                    "createdAt": "2025-06-21T06:33:39.859Z",
+                                    "updatedAt": "2025-06-22T15:15:53.993Z",
+                                    "__v": 0,
+                                    "image": "https://res.cloudinary.com/dnwjbxkzp/image/upload/v1750529350/customers/profile/ntu6lp9jirkgogxg9ga2.jpg"
+                                }
+                            }
+                        }
+                    }
+                },
+                "500": {
+                    "description": "Unauthenticated", 
+                    "content": {
+                        "application/json": {
+                            "example": {
+                                "msg": "Authentication invalid"
+                            }
+                        }
+                    }
+                }
+                }
+            }
+        },
+        "/customer/history": {
+            "get": {
+                "summary": "Lihat riwayat rental",
+                "tags": ["Customer"],
+                "security": [{"bearerAuth": []}],
+                "responses": {
+                "200": {
+                    "description": "Data riwayat rental", 
+                    "content": {
+                        "application/json": {
+                            "example": {
+                            "data": [
+                                {
+                                "_id": "685666a4b0abece33e6bd2c3",
+                                "transactionId": "P7R6EM",
+                                "customerId": "68565243d49fbf26780b1393",
+                                "driverId": "6856545ad49fbf26780b13bb",
+                                "vehicleId": {
+                                    "_id": "685658c3d49fbf26780b13df",
+                                    "name": "Honda Civic",
+                                    "mainImage": "https://res.cloudinary.com/dnwjbxkzp/image/upload/v1750489273/vehicles/main/iwgloxl5xtvjoyzwoblw.png"
+                                },
+                                "branchId": "68565359d49fbf26780b13a3",
+                                "ordererName": "customer",
+                                "ordererPhone": "08512345689",
+                                "ordererEmail": "customersatu@gmail.com",
+                                "startedAt": "2025-06-22T02:53:00.000Z",
+                                "locationStart": "Kopi kenangan",
+                                "finishedAt": "2025-06-23T14:53:00.000Z",
+                                "locationEnd": "universitas sebelas maret",
+                                "createdAt": "2025-06-21T08:00:36.104Z",
+                                "updatedAt": "2025-06-22T17:35:36.076Z",
+                                "__v": 0,
+                                "ratePerHour": 50000,
+                                "cancelledAt": "2025-06-22T17:35:36.057Z",
+                                "completedAt": "2025-06-22T17:35:36.057Z",
+                                "confirmations": {
+                                    "paymentPaid": false
+                                },
+                                "amount": 1800000,
+                                "penalty": 36
+                                }
+                            ]
+                            }
+                        }
+                    }
+                },
+                "500": {
+                    "description": "Unauthenticated", 
+                    "content": {
+                        "application/json": {
+                            "example": {
+                                "msg": "Authentication invalid"
+                            }
+                        }
+                    }
+                }
+                }
+            }
+        },
+    "/rental/checkConfirmation": {
+      "post": {
+        "summary": "Cek konfirmasi pembayaran",
+        "tags": ["Customer"],
+        "security": [{"bearerAuth": []}],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "rentalId": "6858af36121316d2da79d1ea"
+            }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Status konfirmasi", 
+            "content": {
+                "application/json": {
+                    "example": {
+                        "data": true
+                    }
+                }
+            }
+          }
         }
+      }
+    },
+    "/rental/{id}/cancel": {
+      "post": {
+        "summary": "Batalkan rental",
+        "tags": ["Customer"],
+        "security": [{"bearerAuth": []}],
+        "parameters": [{
+            "name": "id", 
+            "in": "path", 
+            "required": true,
+            "description": "ID rental yang ingin dibatalkan",
+            "schema": {"type": "string"}
+        }],
+        "responses": {
+            "200": {
+                "description": "Rental dibatalkan", 
+                "content": {
+                    "application/json": {
+                        "example": {
+                        "message": "Rental berhasil dibatalkan",
+                        "data": {
+                            "_id": "6858af36121316d2da79d1ea",
+                            "transactionId": "K0V8AO",
+                            "customerId": "68565243d49fbf26780b1393",
+                            "driverId": "68565416d49fbf26780b13af",
+                            "vehicleId": "68587d89ae54e3e1ba095eb1",
+                            "branchId": "6856534ed49fbf26780b13a0",
+                            "ordererName": "The Greatest Passenger That's Ever Lived",
+                            "ordererPhone": "081234567890",
+                            "ordererEmail": "tgptel@gaskuy.id",
+                            "startedAt": "2025-06-23T03:32:00.000Z",
+                            "locationStart": "timur ITB",
+                            "ratePerHour": 100000,
+                            "finishedAt": "2025-06-24T03:32:00.000Z",
+                            "locationEnd": "barat ITB",
+                            "createdAt": "2025-06-23T01:34:46.213Z",
+                            "updatedAt": "2025-06-23T01:49:21.790Z",
+                            "__v": 0,
+                            "completedAt": "2025-06-23T01:49:21.789Z",
+                            "cancelledAt": "2025-06-23T01:49:21.789Z",
+                            "confirmations": {
+                            "paymentPaid": false
+                            }
+                        }
+                        }
+                    }
+                }
+            },
+            "404": {
+            "description": "Not Found",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "msg": "Rental tidak valid"
+                    }
+                }
+            }
+          }
+        }
+      }
+    },
+    "/rental/{id}/review": {
+      "post": {
+        "summary": "Beri ulasan rental",
+        "tags": ["Customer"],
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+            {
+            "name": "id", 
+            "in": "path", 
+            "description": "ID rental yang ingin direview",
+            "example": "6858af36121316d2da79d1ea", 
+            "required": true, 
+            "schema": {"type": "string"}}],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {"rating": 5, "review": "Mobil bersih dan nyaman"}
+            }
+          }
+        },
+        "responses": {
+            "200": {
+                "description": "Ulasan berhasil", 
+                "content": {
+                    "application/json": {
+                        "example": {
+                        "message": "Review berhasil ditambahkan",
+                        "data": {
+                            "_id": "6858af36121316d2da79d1ea",
+                            "transactionId": "K0V8AO",
+                            "rating": 5,
+                            "review": "Mobil bersih dan nyaman"
+                        }
+                        }
+                    }
+                }
+            },
+            "404": {
+            "description": "Not Found",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "msg": "Rental tidak valid"
+                    }
+                }
+            }
+          }
+        }
+      }
+    },
+    "/vehicle/{id}/review": {
+      "get": {
+        "summary": "Lihat ulasan kendaraan",
+        "tags": ["Customer"],
+        "security": [{"bearerAuth": []}],
+        "parameters": [{
+            "name": "id", 
+            "in": "path", 
+            "required": true, 
+            "description": "ID kendaraan yang ingin dilihat reviewnya",
+            "example": "68587d89ae54e3e1ba095eb1",
+            "schema": {"type": "string"}
+            }],
+        "responses": {
+          "200": {
+            "description": "Daftar ulasan", 
+            "content": {
+                "application/json": {
+                    "example": {
+                        "data": [
+                            {
+                            "_id": "6858af36121316d2da79d1ea",
+                            "customerId": {
+                                "_id": "68565243d49fbf26780b1393",
+                                "fullName": "Faqih Khawarizzer",
+                                "image": "https://res.cloudinary.com/dnwjbxkzp/image/upload/v1750529350/customers/profile/ntu6lp9jirkgogxg9ga2.jpg"
+                            },
+                            "rating": 5,
+                            "review": "Mobil bersih dan nyaman",
+                            "reviewAddedAt": "2025-06-23 09:01"
+                            }
+                        ]
+                    }
+                }
+            }
+          }
+        }
+      }
+    },
+    "/vehicles/{id}/checkout": {
+      "post": {
+        "summary": "Checkout kendaraan",
+        "tags": ["Customer"],
+        "security": [{"bearerAuth": []}],
+        "parameters": [{
+            "name": "id", 
+            "in": "path", 
+            "description": "ID kendaraan yang ingin dirental",
+            "required": true, 
+            "example": "68587d89ae54e3e1ba095eb1",
+            "schema": {"type": "string"}}],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "withDriver": true,
+                "ordererName": "The Greatest Passenger That's Ever Lived",
+                "ordererPhone": "08123456789",
+                "ordererEmail": "tgptel@gmail.com",
+                "startedAt": "2025-07-01, 09:00",
+                "locationStart": "Timur ITB",
+                "finishedAt": "2025-07-01, 17:00",
+                "locationEnd": "Barat ITB",
+                "note": "Perjalanan dinas"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Checkout berhasil", 
+            "content": {
+                "application/json": {
+                    "example": {
+                        "message": "Order berhasil",
+                        "rental": {
+                            "transactionId": "OOXB84",
+                            "customerId": "68565243d49fbf26780b1393",
+                            "driverId": "68565416d49fbf26780b13af",
+                            "vehicleId": "68587d89ae54e3e1ba095eb1",
+                            "branchId": "6856534ed49fbf26780b13a0",
+                            "ordererName": "The Greatest Passenger That's Ever Lived",
+                            "ordererPhone": "08123456789",
+                            "ordererEmail": "tgptel@gmail.com",
+                            "startedAt": "2025-07-01T02:00:00.000Z",
+                            "locationStart": "Timur ITB",
+                            "ratePerHour": 100000,
+                            "finishedAt": "2025-07-01T10:00:00.000Z",
+                            "locationEnd": "Barat ITB",
+                            "_id": "6858b80cb0513a59fa38ec1b",
+                            "createdAt": "2025-06-23T02:12:28.409Z",
+                            "updatedAt": "2025-06-23T02:12:28.409Z",
+                            "__v": 0,
+                            "amount": 1000000
+                        }
+                        }
+                }
+            }
+          }
+        }
+      }
+    },
+    "/customer/edit": {
+      "post": {
+        "summary": "Edit profil customer",
+        "tags": ["Customer"],
+        "security": [{"bearerAuth": []}],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "fullName": {"type": "string"},
+                  "phoneNumber": {"type": "string"},
+                  "address": {"type": "string"},
+                  "image": {"type": "string", "format": "binary"}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Profil berhasil diupdate", 
+            "content": {
+                "application/json": {
+                    "example": {
+                        "message": "Profile berhasil diupdate",
+                        "data": {
+                            "_id": "68565243d49fbf26780b1393",
+                            "fullName": "Faqih Khawaricky",
+                            "email": "customersatu@gmail.com",
+                            "phoneNumber": "0888888888",
+                            "address": "Rumah saya",
+                            "role": "customer",
+                            "deletedAt": null,
+                            "createdAt": "2025-06-21T06:33:39.859Z",
+                            "updatedAt": "2025-06-23T02:18:53.374Z",
+                            "__v": 0,
+                            "image": "https://res.cloudinary.com/dnwjbxkzp/image/upload/v1750645204/customers/profile/zbdzhap3hzwr1gnbcpub.jpg"
+                        }
+                    }
+                }
+            }
+          }
+        }
+      }
+    }
     },
     "components": {
         "securitySchemes": {
