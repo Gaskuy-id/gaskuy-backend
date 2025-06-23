@@ -4,7 +4,7 @@ const User = require("../../api/v1/users/model");
 const { BadRequestError, NotFoundError } = require('../../errors');
 
 const getAllRentalByBranchService = async (branchId) => {
-    let results = await Rental.find({branchId}).populate('vehicleId', 'name').populate('driverId', 'fullName phoneNumber');
+    let results = await Rental.find({branchId}).populate('vehicleId', 'name lastMaintenance').populate('driverId', 'fullName phoneNumber');
 
     const now = new Date()
     const final_result = results.map(result => {
