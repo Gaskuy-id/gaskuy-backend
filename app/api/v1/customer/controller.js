@@ -1,5 +1,15 @@
 const { StatusCodes } = require('http-status-codes');
-const { checkoutService, checkPaymentConfirmationService, editProfileService, getProfileService, getAvailableVehiclesService, getAllRentalHistoryService } = require("../../../services/mongoose/customers");
+const { 
+    checkoutService, 
+    checkPaymentConfirmationService, 
+    getReviewByVehicleIdService, 
+    cancelRentalService, 
+    editProfileService, 
+    getProfileService, 
+    getAvailableVehiclesService, 
+    getAllRentalHistoryService,
+    createRentalReviewService
+} = require("../../../services/mongoose/customers");
 
 const editProfileController = async (req, res, next) => {
     try {
@@ -84,8 +94,6 @@ const getAllRentalHistoryController = async (req, res, next) => {
         const _id = req.user.id
 
         const result = await getAllRentalHistoryService(_id)
-        console.log(req.user)
-        console.log(result)
 
         res.status(StatusCodes.OK).json({
             data: result
@@ -107,6 +115,41 @@ const getAvailableVehiclesController = async (req, res, next) => {
         next(error);
     }
 };
+
+const createRentalReviewController = async (req, res, next) => {
+    try{
+        const { review, rating } = req.body;
+        const { id } = req.params;
+
+        const result = await createRentalReviewService(id, rating, review);
+
+        res.status(StatusCodes.OK).json({
+            message: "Review berhasil ditambahkan",
+            data: {
+                "_id":result._id,
+                "transactionId":result.transactionId,
+                "rating": result.rating,
+                "review": result.review
+            }
+        })
+    }catch (error){
+        next(error)
+    }
+}
+
+const getReviewByVehicleIdController = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+
+        const result =await getReviewByVehicleIdService(id);
+
+        res.status(StatusCodes.OK).json({
+            data: result
+        })
+    }catch(error){
+        next(error)
+    }
+}
 
 const checkoutController = async (req, res, next) => {
     try {
@@ -137,11 +180,28 @@ const checkoutController = async (req, res, next) => {
     }
 };
 
+const cancelRentalController = async (req, res, next) => {
+    try {
+        const rentalId = req.params.id;
+        const result = await cancelRentalService(rentalId);
+
+        res.status(StatusCodes.OK).json({
+            message: "Rental berhasil dibatalkan",
+            data: result
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
 module.exports = {
     getProfileController,
     editProfileController,
     getAllRentalHistoryController,
     checkoutController,
+    cancelRentalController,
     checkPaymentConfirmationController,
-    getAvailableVehiclesController
+    getAvailableVehiclesController,
+    createRentalReviewController,
+    getReviewByVehicleIdController
 };
