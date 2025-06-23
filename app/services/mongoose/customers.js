@@ -80,7 +80,7 @@ const checkoutService = async ({ vehicleId, customerId, withDriver, ordererName,
 const checkPaymentConfirmationService = async (id) => {
     const result = await Rental.findById(id);
 
-    return result.confirmations == undefined ? false : result.confirmations.paymentPaid;
+    return result.confirmations == undefined ? null : result.confirmations.paymentPaid;
 }
 
 const getAllRentalHistoryService = async (userId) => {
