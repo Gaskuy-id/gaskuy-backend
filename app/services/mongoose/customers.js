@@ -260,8 +260,8 @@ const cancelRentalService = async (rentalId) => {
         const dateNow = new Date()
         rental.completedAt = dateNow
         rental.cancelledAt = dateNow
-        // rental.confirmations = {}
-        // rental.confirmations.paymentPaid = false
+        rental.confirmations = {}
+        rental.confirmations.paymentPaid = false
 
         await rental.save({ session });
 
