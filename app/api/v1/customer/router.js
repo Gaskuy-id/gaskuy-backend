@@ -13,7 +13,6 @@ const {
     createRentalReviewController,
     getReviewByVehicleIdController
 } = require("./controller");
-const upload = require("../../../middlewares/upload");
 
 const { authenticateUser } = require("../../../middlewares/auth");
 const uploadMiddleware = require("../../../middlewares/upload");

@@ -94,8 +94,6 @@ const getAllRentalHistoryController = async (req, res, next) => {
         const _id = req.user.id
 
         const result = await getAllRentalHistoryService(_id)
-        console.log(req.user)
-        console.log(result)
 
         res.status(StatusCodes.OK).json({
             data: result
@@ -127,7 +125,12 @@ const createRentalReviewController = async (req, res, next) => {
 
         res.status(StatusCodes.OK).json({
             message: "Review berhasil ditambahkan",
-            data: result
+            data: {
+                "_id":result._id,
+                "transactionId":result.transactionId,
+                "rating": result.rating,
+                "review": result.review
+            }
         })
     }catch (error){
         next(error)

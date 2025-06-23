@@ -16,13 +16,10 @@ const checkoutService = async ({ vehicleId, customerId, withDriver, ordererName,
         const startedAtDate = DateTime.fromISO(startedAt.replace(", ", "T"), { zone: 'UTC+7' }).toJSDate();
         const finishedAtDate = DateTime.fromISO(finishedAt.replace(", ", "T"), { zone: 'UTC+7' }).toJSDate();
         const vehicleCheck = await Vehicle.findById(vehicleId);
-        console.log(startedAt, startedAtDate, finishedAt, finishedAtDate)
 
         if(!vehicleCheck || vehicleCheck.currentStatus != "tersedia"){
             throw new NotFoundError("Kendaraan sudah tidak tersedia"); 
         }
-
-        console.log(startedAtDate, finishedAtDate)
 
         vehicleCheck.currentStatus = "tidak tersedia";
         let ratePerHour = vehicleCheck.ratePerHour;
@@ -83,20 +80,18 @@ const checkoutService = async ({ vehicleId, customerId, withDriver, ordererName,
 const checkPaymentConfirmationService = async (id) => {
     const result = await Rental.findById(id);
 
-    console.log(result)
-
     return result.confirmations == undefined ? false : result.confirmations.paymentPaid;
 }
 
 const getAllRentalHistoryService = async (userId) => {
-    const results = await Rental.find({customerId: userId}).populate('vehicleId');
+    const results = await Rental.find({customerId: userId}).populate('vehicleId', 'name mainImage');
 
     let now = new Date()
     let final_result = []
     for (let i=0; i< results.length; i++){
         const result = results[i]
         const longRent = Math.abs(result.startedAt - result.finishedAt)/36e5
-        const amount = result.vehicleId.ratePerHour * longRent
+        const amount = result.ratePerHour * longRent
         const end = result.completedAt==undefined ? now : result.finishedAt
         const penalty = Math.abs(result.startedAt - end)/36e5
 
@@ -217,7 +212,6 @@ const getReviewByVehicleIdService = async (vehicleId) => {
     results = results.map(result => {
         let rawDate = result.reviewAddedAt
         let localizeDate = DateTime.fromJSDate(rawDate).setZone('Asia/Bangkok').toFormat('yyyy-MM-dd HH:mm')
-        console.log(localizeDate)
 
         return {
             ...result.toJSON(),
@@ -237,7 +231,7 @@ const cancelRentalService = async (rentalId) => {
             throw new NotFoundError("Rental tidak ditemukan");
         }
 
-        if (rental.confirmations.paymentPaid) {
+        if (rental.confirmations && rental.confirmations.paymentPaid) {
             throw new BadRequestError("Rental sudah terkonfirmasi, tidak bisa dibatalkan");
         }
 
@@ -254,8 +248,8 @@ const cancelRentalService = async (rentalId) => {
         await vehicle.save({ session });
 
         if(rental.driverId){
-            const driver = await Driver.findById(rental.driverId).session(session);
-            if (!driver) {
+            const driver = await User.findById(rental.driverId).session(session);
+            if (!driver | driver.role !== "driver") {
                 throw new NotFoundError("Driver tidak valid")
             }
             driver.driverInfo.currentStatus = "tersedia";
@@ -266,6 +260,7 @@ const cancelRentalService = async (rentalId) => {
         const dateNow = new Date()
         rental.completedAt = dateNow
         rental.cancelledAt = dateNow
+        rental.confirmations = {}
         rental.confirmations.paymentPaid = false
 
         await rental.save({ session });
