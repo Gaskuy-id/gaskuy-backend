@@ -1,5 +1,5 @@
 const { StatusCodes } = require('http-status-codes');
-const { signupService, signinService } = require("../../../services/mongoose/auth");
+const { signupService, signinService, changePasswordService } = require("../../../services/mongoose/auth");
 
 const signupController = async (req, res, next) => {
     try {
@@ -37,7 +37,28 @@ const signinController = async (req, res, next) => {
     }
 };
 
+const changePasswordController = async (req, res, next) => {
+    try {
+        const { email, newPassword } = req.body;
+
+        const result = await changePasswordService({
+            email,
+            newPassword
+        });
+
+        res.status(StatusCodes.OK).json({
+            message: result.message,
+            data: {
+                email: result.email
+            }
+        });
+    } catch (error) {
+        next(error)
+    }
+};
+
 module.exports = {
     signupController,
     signinController,
+    changePasswordController
 }

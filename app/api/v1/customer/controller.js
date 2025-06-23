@@ -1,6 +1,5 @@
 const { StatusCodes } = require('http-status-codes');
-const { signupService, signinService } = require("../../../services/mongoose/auth");
-const { checkoutService, editProfileService, getProfileService, getAvailableVehiclesService, getAllRentalHistoryService } = require("../../../services/mongoose/customers");
+const { checkoutService, checkPaymentConfirmationService, editProfileService, getProfileService, getAvailableVehiclesService, getAllRentalHistoryService } = require("../../../services/mongoose/customers");
 
 const editProfileController = async (req, res, next) => {
     try {
@@ -43,6 +42,20 @@ const editProfileController = async (req, res, next) => {
     }
 };
 
+const checkPaymentConfirmationController = async (req, res, next) => {
+    try {
+        const { rentalId } = req.body;
+
+        const result = await checkPaymentConfirmationService(rentalId);
+
+        res.status(StatusCodes.OK).json({
+            data: result
+        })
+    } catch(error) {
+        next(error)
+    }
+}
+
 const getProfileController = async (req, res, next) => {
     try {
         const _id = req.user.id;
@@ -70,7 +83,9 @@ const getAllRentalHistoryController = async (req, res, next) => {
     try {
         const _id = req.user.id
 
-        const result = getAllRentalHistoryService(_id)
+        const result = await getAllRentalHistoryService(_id)
+        console.log(req.user)
+        console.log(result)
 
         res.status(StatusCodes.OK).json({
             data: result
@@ -127,5 +142,6 @@ module.exports = {
     editProfileController,
     getAllRentalHistoryController,
     checkoutController,
+    checkPaymentConfirmationController,
     getAvailableVehiclesController
 };
