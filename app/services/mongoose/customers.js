@@ -56,8 +56,8 @@ const checkoutService = async ({ vehicleId, customerId, withDriver, ordererName,
             amount += 25000 * hours
 
             driverCheck.driverInfo.currentStatus = "bekerja";
-            await driverCheck.save( {session} );
             rentalData.driverId = driverCheck._id;
+            await driverCheck.save( {session} );
         }
 
         const result = await Rental.create([rentalData], { session });
