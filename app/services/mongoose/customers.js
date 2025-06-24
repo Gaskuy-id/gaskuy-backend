@@ -53,7 +53,7 @@ const checkoutService = async ({ vehicleId, customerId, withDriver, ordererName,
                 throw new NotFoundError("Sopir sedang tidak tersedia");
             }
 
-            amount += 25000 * hours
+            // amount += 25000 * hours
 
             driverCheck.driverInfo.currentStatus = "bekerja";
             rentalData.driverId = driverCheck._id;

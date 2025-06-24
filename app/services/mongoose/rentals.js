@@ -16,10 +16,10 @@ const getAllRentalByBranchService = async (branchId) => {
         const lateHours = Math.round(msLate / 36e5);
         let penalty = lateHours * result.ratePerHour;
 
-        if(result.driverId != undefined){
-            amount += longRentHours * 25000
-            penalty += lateHours * 25000
-        }
+        // if(result.driverId != undefined){
+        //     amount += longRentHours * 25000
+        //     penalty += lateHours * 25000
+        // }
 
         return {
             ...result.toJSON(),
@@ -68,10 +68,10 @@ const getAllRentalByCustomerService = async (customerId) => {
         const lateHours = Math.round(msLate / 36e5);
         let penalty = lateHours * result.ratePerHour;
 
-        if(result.driverId != undefined){
-            amount += longRentHours * 25000
-            penalty += lateHours * 25000
-        }
+        // if(result.driverId != undefined){
+        //     amount += longRentHours * 25000
+        //     penalty += lateHours * 25000
+        // }
 
         return {
             ...result.toJSON(),
