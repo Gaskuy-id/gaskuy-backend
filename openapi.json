@@ -1,0 +1,1892 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "API Specification (Gaskuy-RESTful API)",
+        "description": "OpenAPI untuk website (RESTFul API) rental mobil Gaskuy",
+        "version": "1.0.0",
+        "termsOfService": "https://gaskuy.com/terms",
+        "contact": {
+            "name": "Gaskuy Support",
+            "url": "https://gasskuy.com",
+            "email": "gasskuy@gmail.com"
+        },
+        "license": {
+            "name": "MIT",
+            "url": "https://opensource.org/license/mit/"
+        }
+    },
+    "servers": [
+        {
+            "description": "Gaskuy API Server",
+            "url": "http://localhost:5000/api/v1",
+            "variables": {
+                "environment": {
+                    "description": "Environment for the API server",
+                    "default": "dev",
+                    "enum": [
+                        "dev",
+                        "qa",
+                        "prod"
+                    ]
+                }
+            }
+        }
+    ],
+    "paths": {
+        "/cms/vehicle": {
+            "post": {
+                "summary": "Create a new vehicle",
+                "tags": ["vehicle"],
+                "description": "Membuat data mobil baru",
+                "security": [{
+                    "bearerAuth": []
+                }],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "name",
+                                    "transmission",
+                                    "year",
+                                    "kilometer",
+                                    "engineCapacity",
+                                    "seat",
+                                    "luggage",
+                                    "branchId",
+                                    "ratePerHour",
+                                    "currentStatus",
+                                    "mainImage",
+                                    "detailImages"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Toyota Avanza"
+                                    },
+                                    "transmission": {
+                                        "type": "string",
+                                        "enum": ["manual", "automatic"],
+                                        "example": "automatic"
+                                    },
+                                    "year": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "example": 2020
+                                    },
+                                    "kilometer": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "example": 15000
+                                    },
+                                    "engineCapacity": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "example": 3000
+                                    },
+                                    "seat": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "example": 7
+                                    },
+                                    "luggage": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "example": 20
+                                    },
+                                    "fuel": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "example": 50
+                                    },
+                                    "branchId": {
+                                        "type": "string",
+                                        "example": "23582164936636"
+                                    },
+                                    "ratePerHour": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "example": 100000
+                                    },
+                                    "currentStatus": {
+                                        "type": "string",
+                                        "enum": ["tersedia", "tidak tersedia", "maintenance"],
+                                        "default": "tersedia",
+                                        "example": "tersedia"
+                                    },
+                                    "mainImage": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "detailImages": {
+                                        "type": "array",
+                                        "minItems": 4,
+                                        "maxItems": 4,
+                                        "items": {
+                                            "type": "string",
+                                            "format": "binary"
+                                        }
+                                    }
+                                }
+                            },
+                            "example": {
+                                "name": "Toyota Avanza",
+                                "transmission": "automatic",
+                                "year": 2020,
+                                "kilometer": 15000,
+                                "engineCapacity": 3000,
+                                "seat": 7,
+                                "luggage": 20,
+                                "fuel": 50,
+                                "branchId": "23582164936636",
+                                "ratePerHour": 100000,
+                                "currentStatus": "tersedia",
+                                "mainImage": "image.jpg",
+                                "detailImages": [
+                                    "image1.jpg",
+                                    "image2.jpg",
+                                    "image3.jpg",
+                                    "image4.jpg"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Vehicle created successfully",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Vehicle created successfully",
+                                    "data": {
+                                        "id": "64d5f7a9e6a3f3b9c7a8b5c2",
+                                        "name": "Toyota Avanza",
+                                        "transmission": "automatic",
+                                        "year": 2020,
+                                        "kilometer": 15000,
+                                        "engineCapacity": 3000,
+                                        "seat": 7,
+                                        "luggage": 20,
+                                        "fuel": 50,
+                                        "branchId": "23582164936636",
+                                        "ratePerHour": 100000,
+                                        "currentStatus": "tersedia",
+                                        "mainImage": "uploads/vehicles/avanza.jpg",
+                                        "detailImages": [
+                                            "uploads/vehicles/avanza1.jpg",
+                                            "uploads/vehicles/avanza2.jpg",
+                                            "uploads/vehicles/avanza3.jpg",
+                                            "uploads/vehicles/avanza4.jpg"
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Validation error",
+                                    "errors": [
+                                        "name is required",
+                                        "detailImages must contain exactly 4 items"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Unauthorized: Missing or invalid token"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/cms/vehicle/{id}": {
+            "get": {
+                "summary": "Get one vehicle by id",
+                "tags": ["vehicle"],
+                "description": "Melihat data mobil berdasarkan id",
+                "security": [{
+                    "bearerAuth": []
+                }],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "description": "ID mobil yang akan dilihat",
+                        "schema": {
+                            "type": "string",
+                            "example": "64d5f7a9e6a3f3b9c7a8b5c2"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "id": "64d5f7a9e6a3f3b9c7a8b5c2",
+                                    "name": "Toyota Avanza",
+                                    "transmission": "automatic",
+                                    "year": 2020,
+                                    "kilometer": 15000,
+                                    "engineCapacity": 3000,
+                                    "seat": 7,
+                                    "luggage": 20,
+                                    "fuel": 50,
+                                    "branchId": "23582164936636",
+                                    "ratePerHour": 100000,
+                                    "currentStatus": "tersedia",
+                                    "mainImage": "uploads/vehicles/avanza.jpg",
+                                    "detailImages": [
+                                        "uploads/vehicles/avanza1.jpg",
+                                        "uploads/vehicles/avanza2.jpg",
+                                        "uploads/vehicles/avanza3.jpg",
+                                        "uploads/vehicles/avanza4.jpg"
+                                    ],
+                                    "createdAt": "2023-08-11T10:00:00Z",
+                                    "updatedAt": "2023-08-11T10:00:00Z"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Unauthorized: Missing or invalid token"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Vehicle not found",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Vehicle not found with id: 64d5f7a9e6a3f3b9c7a8b5c2"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "summary": "Update a vehicle by id",
+                "tags": ["vehicle"],
+                "description": "memperbarui data mobil berdasarkan id",
+                "security": [{
+                    "bearerAuth": []
+                }],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "description": "ID mobil yang akan diperbarui",
+                        "schema": {
+                            "type": "string",
+                            "example": "64d5f7a9e6a3f3b9c7a8b5c2"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Toyota Avanza"
+                                    },
+                                    "transmission": {
+                                        "type": "string",
+                                        "enum": ["manual", "automatic"],
+                                        "example": "automatic"
+                                    },
+                                    "year": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "example": 2020
+                                    },
+                                    "kilometer": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "example": 15000
+                                    },
+                                    "engineCapacity": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "example": 3000
+                                    },
+                                    "seat": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "example": 7
+                                    },
+                                    "luggage": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "example": 20
+                                    },
+                                    "fuel": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "example": 50
+                                    },
+                                    "branchId": {
+                                        "type": "string",
+                                        "example": "23582164936636"
+                                    },
+                                    "ratePerHour": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "example": 100000
+                                    },
+                                    "currentStatus": {
+                                        "type": "string",
+                                        "enum": ["tersedia", "tidak tersedia", "maintenance"],
+                                        "default": "tersedia",
+                                        "example": "tersedia"
+                                    },
+                                    "mainImage": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "detailImages": {
+                                        "type": "array",
+                                        "minItems": 4,
+                                        "maxItems": 4,
+                                        "items": {
+                                            "type": "string",
+                                            "format": "binary"
+                                        }
+                                    }
+                                }
+                            },
+                            "example": {
+                                "name": "Toyota Avanza Facelift",
+                                "kilometer": 20000,
+                                "currentStatus": "tersedia"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Vehicle updated successfully",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Vehicle updated successfully",
+                                    "data": {
+                                        "id": "64d5f7a9e6a3f3b9c7a8b5c2",
+                                        "name": "Toyota Avanza Facelift",
+                                        "transmission": "automatic",
+                                        "year": 2020,
+                                        "kilometer": 20000,
+                                        "engineCapacity": 3000,
+                                        "seat": 7,
+                                        "luggage": 20,
+                                        "fuel": 50,
+                                        "branchId": "23582164936636",
+                                        "ratePerHour": 100000,
+                                        "currentStatus": "tersedia",
+                                        "mainImage": "uploads/vehicles/avanza.jpg",
+                                        "detailImages": [
+                                            "uploads/vehicles/avanza1.jpg",
+                                            "uploads/vehicles/avanza2.jpg",
+                                            "uploads/vehicles/avanza3.jpg",
+                                            "uploads/vehicles/avanza4.jpg"
+                                        ],
+                                        "createdAt": "2023-08-11T10:00:00Z",
+                                        "updatedAt": "2023-08-11T14:30:00Z"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Validation error",
+                                    "errors": [
+                                        "year must be a valid year",
+                                        "detailImages must contain exactly 4 items"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Unauthorized: Missing or invalid token"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Vehicle not found",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Vehicle not found with id: 64d5f7a9e6a3f3b9c7a8b5c2"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Delete a vehicle by id",
+                "tags": ["vehicle"],
+                "description": "Menghapus data mobil berdasarkan id",
+                "security": [{
+                    "bearerAuth": []
+                }],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "description": "ID mobil yang akan dihapus",
+                        "schema": {
+                            "type": "string",
+                            "example": "64d5f7a9e6a3f3b9c7a8b5c2"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Vehicle deleted successfully"
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Unauthorized: Missing or invalid token"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Vehicle not found",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Vehicle not found with id: 64d5f7a9e6a3f3b9c7a8b5c2"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/cms/vehicle/branch/{branchId}": {
+            "get": {
+                "summary": "Get all vehicles by branch id",
+                "tags": ["vehicle"],
+                "description": "Melihat semua data mobil berdasarkan id cabang",
+                "security": [{
+                    "bearerAuth": []
+                }],
+                "parameters": [
+                    {
+                        "name": "branchId",
+                        "in": "path",
+                        "required": true,
+                        "description": "ID cabang tempat mobil yang akan dilihat",
+                        "schema": {
+                            "type": "string",
+                            "example": "23582164936636"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "example": [
+                                    {
+                                        "id": "64d5f7a9e6a3f3b9c7a8b5c2",
+                                        "name": "Toyota Avanza",
+                                        "transmission": "automatic",
+                                        "year": 2020,
+                                        "kilometer": 15000,
+                                        "engineCapacity": 3000,
+                                        "seat": 7,
+                                        "luggage": 20,
+                                        "fuel": 50,
+                                        "branchId": "23582164936636",
+                                        "ratePerHour": 100000,
+                                        "currentStatus": "tersedia",
+                                        "mainImage": "uploads/vehicles/avanza.jpg",
+                                        "detailImages": [
+                                            "uploads/vehicles/avanza1.jpg",
+                                            "uploads/vehicles/avanza2.jpg",
+                                            "uploads/vehicles/avanza3.jpg",
+                                            "uploads/vehicles/avanza4.jpg"
+                                        ],
+                                        "createdAt": "2023-08-11T10:00:00Z",
+                                        "updatedAt": "2023-08-11T10:00:00Z"
+                                    },
+                                    {
+                                        "id": "64d5f7a9e6a3f3b9c7a8b5c3",
+                                        "name": "Honda Brio",
+                                        "transmission": "manual",
+                                        "year": 2021,
+                                        "kilometer": 10000,
+                                        "engineCapacity": 1200,
+                                        "seat": 5,
+                                        "luggage": 15,
+                                        "fuel": 40,
+                                        "branchId": "23582164936636",
+                                        "ratePerHour": 80000,
+                                        "currentStatus": "tersedia",
+                                        "mainImage": "uploads/vehicles/brio.jpg",
+                                        "detailImages": [
+                                            "uploads/vehicles/brio1.jpg",
+                                            "uploads/vehicles/brio2.jpg",
+                                            "uploads/vehicles/brio3.jpg",
+                                            "uploads/vehicles/brio4.jpg"
+                                        ],
+                                        "createdAt": "2023-08-12T09:00:00Z",
+                                        "updatedAt": "2023-08-12T09:00:00Z"
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Unauthorized: Missing or invalid token"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Branch not found",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Branch not found with id: 23582164936636"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/cms/users/": {
+            "post": {
+                "summary": "Create a new driver",
+                "tags": ["users"],
+                "description": "Membuat data driver baru",
+                "security": [{
+                    "bearerAuth": []
+                }],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "fullName",
+                                    "email",
+                                    "phoneNumber",
+                                    "password",
+                                    "address",
+                                    "branchId",
+                                    "role"
+                                ],
+                                "properties": {
+                                    "fullName": {
+                                        "type": "string",
+                                        "example": "driver"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "driver@gmail.com"
+                                    },
+                                    "phoneNumber": {
+                                        "type": "string",
+                                        "example": "+1234567890"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "driver123"
+                                    },
+                                    "address": {
+                                        "type": "string",
+                                        "example": "Jalan Raya No. 123"
+                                    },
+                                    "branchId": {
+                                        "type": "string",
+                                        "example": "23582164936636"
+                                    },
+                                    "role": {
+                                        "type": "string",
+                                        "enum": ["driver", "admin"],
+                                        "default": "driver",
+                                        "example": "driver"
+                                    },
+                                    "currentStatus": {
+                                        "type": "string",
+                                        "enum": ["tersedia", "bekerja", "tidak tersedia"],
+                                        "default": "tersedia",
+                                        "example": "tersedia"
+                                    }
+                                }
+                            },
+                            "example": {
+                                "fullName": "Driver Name",
+                                "email": "driver@gmail.com",
+                                "phoneNumber": "+1234567890",
+                                "password": "driver123",
+                                "address": "Jalan Raya No. 123",
+                                "branchId": "23582164936636",
+                                "role": "driver",
+                                "currentStatus": "tersedia"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Driver created successfully",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "driver created successfully",
+                                    "data": {
+                                        "id": "64d5f7a9e6a3f3b9c7a8b5c2",
+                                        "name": "Driver Name",
+                                        "email": "driver@gmail.com",
+                                        "phoneNumber": "+1234567890",
+                                        "password": "driver123",
+                                        "address": "Jalan Raya No. 123",
+                                        "branchId": "23582164936636",
+                                        "role": "driver",
+                                        "currentStatus": "tersedia"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Validation error",
+                                    "errors": [
+                                        "fullName is required",
+                                        "email must be a valid email address",
+                                        "phoneNumber is required",
+                                        "password must be at least 6 characters long",
+                                        "address is required",
+                                        "branchId is required",
+                                        "role must be either 'driver' or 'admin'"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Unauthorized: Missing or invalid token"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/cms/users/role/{role}": {
+            "get": {
+                "summary": "Get all users by role",
+                "tags": ["users"],
+                "description": "API untuk mengambil semua data user berdasarkan role",
+                "security": [{
+                    "bearerAuth": []
+                }],
+                "parameters": [
+                    {
+                        "name": "role",
+                        "in": "path",
+                        "required": true,
+                        "description": "Peran pengguna yang akan dilihat (driver atau admin)",
+                        "schema": {
+                            "type": "string",
+                            "enum": ["driver", "admin"],
+                            "example": "driver"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "example": [
+                                    {
+                                        "id": "64d5f7a9e6a3f3b9c7a8b5c2",
+                                        "fullName": "Driver Name",
+                                        "email": "drivergmail.com",
+                                        "phoneNumber": "+1234567890",
+                                        "address": "Jalan Raya No. 123",
+                                        "branchId": "23582164936636",
+                                        "role": "driver",
+                                        "currentStatus": "tersedia",
+                                        "createdAt": "2023-08-11T10:00:00Z",
+                                        "updatedAt": "2023-08-11T10:00:00Z"
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Validation error",
+                                    "errors": [
+                                        "role is required"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Unauthorized: Missing or invalid token"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/cms/users/{id}": {
+            "get": {
+                "summary": "Get one user by id",
+                "tags": ["users"],
+                "description": "API untuk mengambil data user berdasarkan id",
+                "security": [{
+                    "bearerAuth": []
+                }],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "description": "ID pengguna yang akan dilihat",
+                        "schema": {
+                            "type": "string",
+                            "example": "64d5f7a9e6a3f3b9c7a8b5c2"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation / User updated successfully",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "getUser": {
+                                        "summary": "Get user by id",
+                                        "value": {
+                                            "id": "64d5f7a9e6a3f3b9c7a8b5c2",
+                                            "fullName": "Driver Name",
+                                            "email": "driver@gmail.com",
+                                            "phoneNumber": "+1234567890",
+                                            "address": "Jalan Raya No. 123",
+                                            "branchId": "23582164936636",
+                                            "role": "driver",
+                                            "currentStatus": "tersedia",
+                                            "createdAt": "2023-08-11T10:00:00Z",
+                                            "updatedAt": "2023-08-11T10:00:00Z"
+                                        }
+                                    },
+                                    "updateUser": {
+                                        "summary": "User updated successfully",
+                                        "value": {
+                                            "message": "User updated successfully",
+                                            "data": {
+                                                "id": "64d5f7a9e6a3f3b9c7a8b5c2",
+                                                "fullName": "Driver Name Updated",
+                                                "email": "driver.updated@gmail.com"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Unauthorized: Missing or invalid token"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "User not found with id: 64d5f7a9e6a3f3b9c7a8b5c2"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "An unexpected error occurred"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "summary": "Update a user by id",
+                "tags": ["users"],
+                "description": "Memperbarui data user berdasarkan id",
+                "security": [{
+                    "bearerAuth": []
+                }],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "description": "ID pengguna yang akan diperbarui",
+                        "schema": {
+                            "type": "string",
+                            "example": "64d5f7a9e6a3f3b9c7a8b5c2"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "fullName": {
+                                        "type": "string",
+                                        "example": "Driver Name Updated"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "driver.updated@gmail.com"
+                                    }
+                                },
+                                "required": ["fullName", "email"]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "User updated successfully",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "User updated successfully",
+                                    "data": {
+                                        "id": "64d5f7a9e6a3f3b9c7a8b5c2",
+                                        "fullName": "Driver Name Updated",
+                                        "email": "driver.updated@gmail.com"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Validation error",
+                                    "errors": [
+                                        "fullName is required",
+                                        "email must be a valid email address"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Unauthorized: Missing or invalid token"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "User not found with id: 64d5f7a9e6a3f3b9c7a8b5c2"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Delete a user by id",
+                "tags": ["users"],
+                "description": "Menghapus data user berdasarkan id",
+                "security": [{
+                    "bearerAuth": []
+                }],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "description": "ID pengguna yang akan dihapus",
+                        "schema": {
+                            "type": "string",
+                            "example": "64d5f7a9e6a3f3b9c7a8b5c2"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "User deleted successfully"
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Unauthorized: Missing or invalid token"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "User not found with id: 64d5f7a9e6a3f3b9c7a8b5c2"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/cms/branches/": {
+            "get": {
+                "summary": "Get all branches",
+                "tags": ["branches"],
+                "description": "API untuk mengambil semua data cabang",
+                "security": [{
+                    "bearerAuth": []
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "example": [
+                                    {
+                                        "id": "23582164936636",
+                                        "name": "Cabang Utama",
+                                        "address": "Jalan Raya No. 123",
+                                        "phoneNumber": "+1234567890",
+                                        "createdAt": "2023-08-11T10:00:00Z",
+                                        "updatedAt": "2023-08-11T10:00:00Z"
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Unauthorized: Missing or invalid token"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/cms/branch/": {
+            "post": {
+                "summary": "Create a new branch",
+                "tags": ["branches"],
+                "description": "API untuk membuat cabang baru",
+                "security": [{
+                    "bearerAuth": []
+                }],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Cabang Utama"
+                                    },
+                                    "address": {
+                                        "type": "string",
+                                        "example": "Jalan Raya No. 123"
+                                    },
+                                    "phoneNumber": {
+                                        "type": "string",
+                                        "example": "+1234567890"
+                                    }
+                                },
+                                "required": ["name", "address", "phoneNumber"]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Branch created successfully",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Branch created successfully",
+                                    "data": {
+                                        "id": "23582164936636",
+                                        "name": "Cabang Utama",
+                                        "address": "Jalan Raya No. 123",
+                                        "phoneNumber": "+1234567890",
+                                        "createdAt": "2023-08-11T10:00:00Z",
+                                        "updatedAt": null
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Invalid request payload"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Unauthorized: Missing or invalid token"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/signup": {
+            "post": {
+                "summary": "User signup",
+                "tags": ["auth"],
+                "description": "API untuk mendaftar sebagai pengguna baru",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "fullName": {
+                                        "type": "string",
+                                        "example": "Ryan"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "ryangmail.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password123"
+                                    }
+                                },
+                                "required": ["fullName", "email", "password"]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "User created successfully",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "User created successfully"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Invalid request payload"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/login": {
+            "post": {
+                "summary": "User login",
+                "tags": ["auth"],
+                "description": "API untuk login pengguna",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "ryangmail.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password123"
+                                    }
+                                },
+                                "required": ["email", "password"]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Login successful",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Invalid email or password"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/cms/rentals": {
+            "get": {
+                "summary": "Ambil data rental",
+                "description": "Hanya bisa diakses oleh admin. Mendukung query parameter seperti `rentalId`, `branchId`, `driverId`, atau `customerId`.",
+                "tags": ["Rental"],
+                "security": [{ "bearerAuth": [] }],
+                "parameters": [
+                {
+                    "name": "rentalId",
+                    "in": "query",
+                    "schema": { "type": "string" }
+                },
+                {
+                    "name": "branchId",
+                    "in": "query",
+                    "schema": { "type": "string" }
+                },
+                {
+                    "name": "driverId",
+                    "in": "query",
+                    "schema": { "type": "string" }
+                },
+                {
+                    "name": "customerId",
+                    "in": "query",
+                    "schema": { "type": "string" }
+                }
+                ],
+                "responses": {
+                "200": {
+                    "description": "Data rental berhasil diambil.",
+                    "content": {
+                        "application/json": {
+                            "example": {
+                                "data": [
+                                    {
+                                    "_id": "6856e88dfe0d76382cfe4123",
+                                    "transactionId": "L3P6YK",
+                                    "customerId": "6856bd41da8da836f90ce00a",
+                                    "driverId": {
+                                        "_id": "6856c7095ce76b90fc2c9bb5",
+                                        "fullName": "The Greatest Driver That's Ever Lived",
+                                        "phoneNumber": "08123456789"
+                                    },
+                                    "vehicleId": {
+                                        "_id": "6856c3b05ce76b90fc2c9ba6",
+                                        "name": "The Greatest Car That's Ever Created"
+                                    },
+                                    "branchId": "6856c30a5ce76b90fc2c9b9c",
+                                    "ordererName": "The Greatest Customer That's Ever Lived",
+                                    "ordererPhone": "081234567889",
+                                    "ordererEmail": "orderthecar@gaskuy.id",
+                                    "startedAt": "2025-06-19T17:00:00.000Z",
+                                    "locationStart": "The Greatest Building That's Ever Built",
+                                    "ratePerHour": 50000,
+                                    "finishedAt": "2025-06-21T03:00:00.000Z",
+                                    "locationEnd": "The Second Greatest Building That's Ever Built",
+                                    "createdAt": "2025-06-21T17:14:53.090Z",
+                                    "updatedAt": "2025-06-22T12:03:14.800Z",
+                                    "__v": 0,
+                                    "completedAt": "2025-06-21T02:00:00.000Z",
+                                    "rating": 5,
+                                    "review": "mobilnya agak keren",
+                                    "reviewAddedAt": "2025-06-22T12:03:14.796Z",
+                                    "amount": 2550000,
+                                    "penalty": 0
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                "401": { 
+                    "description": "Unauthorized",
+                    "content": {
+                        "application/json": {
+                            "example": {
+                                "msg": "Unauthorized to acces this route"
+                            }
+                        }
+                    }   
+                }
+                }
+            }
+        },
+        "/cms/driver/rentals": {
+            "get": {
+                "summary": "Ambil data rental untuk driver",
+                "description": "Mengambil semua data rental milik driver yang sedang login.",
+                "tags": ["Rental"],
+                "security": [{ "bearerAuth": [] }],
+                "responses": {
+                "200": {
+                    "description": "Data rental driver berhasil diambil.",
+                    "content": {
+                    "application/json": {
+                        "example": {
+                        "data": [
+                            {
+                                "_id": "685782232c83a2f62553d93d",
+                                "transactionId": "4CK76Q",
+                                "customerId": "685652bcd49fbf26780b139c",
+                                "driverId": "68565416d49fbf26780b13af",
+                                "vehicleId": {
+                                    "_id": "6856dd839f44fbf7c0bccdc8",
+                                    "name": "Toyota Avanza"
+                                },
+                                "branchId": "6856534ed49fbf26780b13a0",
+                                "ordererName": "The Greatest Customer That's Ever Lived",
+                                "ordererPhone": "08123456789",
+                                "ordererEmail": "tgctev@gmail.nah",
+                                "startedAt": "2025-06-22T03:45:00.000Z",
+                                "locationStart": "depan ITB",
+                                "ratePerHour": 100000,
+                                "finishedAt": "2025-06-23T03:45:00.000Z",
+                                "locationEnd": "belakang ITB",
+                                "createdAt": "2025-06-22T04:10:11.762Z",
+                                "updatedAt": "2025-06-22T15:45:49.577Z",
+                                "__v": 0,
+                                "confirmations": {
+                                    "paymentPaid": true,
+                                    "vehicleTaken": true
+                                }
+                            }
+                        ]
+                        }
+                    }
+                    }
+                },
+                "401": { 
+                    "description": "Unauthorized",
+                    "content": {
+                        "application/json": {
+                            "example":{
+                                "msg": "Unauthorized to acces this route"
+                            }
+                        }
+                    }
+                },
+                "403": { "description": "Forbidden" }
+                }
+            }
+        },
+        "/cms/rentals/{id}": {
+            "put": {
+                "summary": "Konfirmasi status rental",
+                "description": "Admin dapat mengonfirmasi status tertentu dari sebuah rental seperti pengambilan kendaraan atau pengembalian.",
+                "tags": ["Rental"],
+                "security": [{ "bearerAuth": [] }],
+                "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "schema": { "type": "string" }
+                }
+                ],
+                "requestBody": {
+                "required": true,
+                "content": {
+                    "application/json": {
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                        "confirmationType": {
+                            "type": "string",
+                            "enum": ["vehicleTaken", "vehicleReturned", "refundRequested", "finePaid"]
+                        },
+                        "confirmationValue": {
+                            "type": "boolean"
+                        }
+                        },
+                        "required": ["confirmationType", "confirmationValue"]
+                    },
+                    "example": {
+                        "confirmationType": "vehicleTaken",
+                        "confirmationValue": true
+                    }
+                    }
+                }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Konfirmasi berhasil dilakukan.",
+                        "content": {
+                        "application/json": {
+                            "example": {
+                                "data": {
+                                    "_id": "685782232c83a2f62553d93d",
+                                    "transactionId": "4CK76Q",
+                                    "ordererName": "The Greatest Customer That's Ever Lived",
+                                    "vehicleReturned": true,
+                                    "updatedAt": "2025-06-23T01:07:33.089Z"
+                                }
+                            }
+                        }
+                        }
+                    },
+                    "400": { 
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json":{
+                                "example":{
+                                    "msg": "Konfirmasi vehicleReturned sudah dilakukan"
+                                }
+                            }
+                        }
+                    },
+                    "401": { 
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "example":{
+                                    "msg": "Unauthorized to acces this route"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "/vehicles": {
+                "get": {
+                    "summary": "Lihat kendaraan tersedia",
+                    "tags": ["Customer"],
+                    "parameters": [
+                    {"name": "city", "in": "query", "schema": {"type": "string"}},
+                    {"name": "currentStatus", "in": "query", "schema": {"type": "string"}},
+                    {"name": "passengerCount", "in": "query", "schema": {"type": "integer"}}
+                    ],
+                    "responses": {
+                    "200": {
+                        "description": "Daftar kendaraan tersedia",
+                        "content": {"application/json": {"example": {"data": [{"_id": "v1", "seat": 4, "ratePerHour": 25000}]}}}
+                    }
+                    }
+                }
+            }
+        },
+        "/customer/profile": {
+            "get": {
+                "summary": "Lihat profil customer",
+                "tags": ["Customer"],
+                "security": [{"bearerAuth": []}],
+                "responses": {
+                "200": {
+                    "description": "Profil customer", 
+                    "content": {
+                        "application/json": {
+                            "example": {
+                                "data": {
+                                    "_id": "68565243d49fbf26780b1393",
+                                    "fullName": "The Greatest Customer That's Ever Lived",
+                                    "email": "tgctev@gaskuy.id",
+                                    "phoneNumber": "0812345678910",
+                                    "address": "Jalan Kaki",
+                                    "role": "customer",
+                                    "deletedAt": null,
+                                    "createdAt": "2025-06-21T06:33:39.859Z",
+                                    "updatedAt": "2025-06-22T15:15:53.993Z",
+                                    "__v": 0,
+                                    "image": "https://res.cloudinary.com/dnwjbxkzp/image/upload/v1750529350/customers/profile/ntu6lp9jirkgogxg9ga2.jpg"
+                                }
+                            }
+                        }
+                    }
+                },
+                "500": {
+                    "description": "Unauthenticated", 
+                    "content": {
+                        "application/json": {
+                            "example": {
+                                "msg": "Authentication invalid"
+                            }
+                        }
+                    }
+                }
+                }
+            }
+        },
+        "/customer/history": {
+            "get": {
+                "summary": "Lihat riwayat rental",
+                "tags": ["Customer"],
+                "security": [{"bearerAuth": []}],
+                "responses": {
+                "200": {
+                    "description": "Data riwayat rental", 
+                    "content": {
+                        "application/json": {
+                            "example": {
+                            "data": [
+                                {
+                                "_id": "685666a4b0abece33e6bd2c3",
+                                "transactionId": "P7R6EM",
+                                "customerId": "68565243d49fbf26780b1393",
+                                "driverId": "6856545ad49fbf26780b13bb",
+                                "vehicleId": {
+                                    "_id": "685658c3d49fbf26780b13df",
+                                    "name": "Honda Civic",
+                                    "mainImage": "https://res.cloudinary.com/dnwjbxkzp/image/upload/v1750489273/vehicles/main/iwgloxl5xtvjoyzwoblw.png"
+                                },
+                                "branchId": "68565359d49fbf26780b13a3",
+                                "ordererName": "customer",
+                                "ordererPhone": "08512345689",
+                                "ordererEmail": "customersatu@gmail.com",
+                                "startedAt": "2025-06-22T02:53:00.000Z",
+                                "locationStart": "Kopi kenangan",
+                                "finishedAt": "2025-06-23T14:53:00.000Z",
+                                "locationEnd": "universitas sebelas maret",
+                                "createdAt": "2025-06-21T08:00:36.104Z",
+                                "updatedAt": "2025-06-22T17:35:36.076Z",
+                                "__v": 0,
+                                "ratePerHour": 50000,
+                                "cancelledAt": "2025-06-22T17:35:36.057Z",
+                                "completedAt": "2025-06-22T17:35:36.057Z",
+                                "confirmations": {
+                                    "paymentPaid": false
+                                },
+                                "amount": 1800000,
+                                "penalty": 36
+                                }
+                            ]
+                            }
+                        }
+                    }
+                },
+                "500": {
+                    "description": "Unauthenticated", 
+                    "content": {
+                        "application/json": {
+                            "example": {
+                                "msg": "Authentication invalid"
+                            }
+                        }
+                    }
+                }
+                }
+            }
+        },
+    "/rental/checkConfirmation": {
+      "post": {
+        "summary": "Cek konfirmasi pembayaran",
+        "tags": ["Customer"],
+        "security": [{"bearerAuth": []}],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "rentalId": "6858af36121316d2da79d1ea"
+            }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Status konfirmasi", 
+            "content": {
+                "application/json": {
+                    "example": {
+                        "data": true
+                    }
+                }
+            }
+          }
+        }
+      }
+    },
+    "/rental/{id}/cancel": {
+      "post": {
+        "summary": "Batalkan rental",
+        "tags": ["Customer"],
+        "security": [{"bearerAuth": []}],
+        "parameters": [{
+            "name": "id", 
+            "in": "path", 
+            "required": true,
+            "description": "ID rental yang ingin dibatalkan",
+            "schema": {"type": "string"}
+        }],
+        "responses": {
+            "200": {
+                "description": "Rental dibatalkan", 
+                "content": {
+                    "application/json": {
+                        "example": {
+                        "message": "Rental berhasil dibatalkan",
+                        "data": {
+                            "_id": "6858af36121316d2da79d1ea",
+                            "transactionId": "K0V8AO",
+                            "customerId": "68565243d49fbf26780b1393",
+                            "driverId": "68565416d49fbf26780b13af",
+                            "vehicleId": "68587d89ae54e3e1ba095eb1",
+                            "branchId": "6856534ed49fbf26780b13a0",
+                            "ordererName": "The Greatest Passenger That's Ever Lived",
+                            "ordererPhone": "081234567890",
+                            "ordererEmail": "tgptel@gaskuy.id",
+                            "startedAt": "2025-06-23T03:32:00.000Z",
+                            "locationStart": "timur ITB",
+                            "ratePerHour": 100000,
+                            "finishedAt": "2025-06-24T03:32:00.000Z",
+                            "locationEnd": "barat ITB",
+                            "createdAt": "2025-06-23T01:34:46.213Z",
+                            "updatedAt": "2025-06-23T01:49:21.790Z",
+                            "__v": 0,
+                            "completedAt": "2025-06-23T01:49:21.789Z",
+                            "cancelledAt": "2025-06-23T01:49:21.789Z",
+                            "confirmations": {
+                            "paymentPaid": false
+                            }
+                        }
+                        }
+                    }
+                }
+            },
+            "404": {
+            "description": "Not Found",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "msg": "Rental tidak valid"
+                    }
+                }
+            }
+          }
+        }
+      }
+    },
+    "/rental/{id}/review": {
+      "post": {
+        "summary": "Beri ulasan rental",
+        "tags": ["Customer"],
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+            {
+            "name": "id", 
+            "in": "path", 
+            "description": "ID rental yang ingin direview",
+            "example": "6858af36121316d2da79d1ea", 
+            "required": true, 
+            "schema": {"type": "string"}}],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {"rating": 5, "review": "Mobil bersih dan nyaman"}
+            }
+          }
+        },
+        "responses": {
+            "200": {
+                "description": "Ulasan berhasil", 
+                "content": {
+                    "application/json": {
+                        "example": {
+                        "message": "Review berhasil ditambahkan",
+                        "data": {
+                            "_id": "6858af36121316d2da79d1ea",
+                            "transactionId": "K0V8AO",
+                            "rating": 5,
+                            "review": "Mobil bersih dan nyaman"
+                        }
+                        }
+                    }
+                }
+            },
+            "404": {
+            "description": "Not Found",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "msg": "Rental tidak valid"
+                    }
+                }
+            }
+          }
+        }
+      }
+    },
+    "/vehicle/{id}/review": {
+      "get": {
+        "summary": "Lihat ulasan kendaraan",
+        "tags": ["Customer"],
+        "security": [{"bearerAuth": []}],
+        "parameters": [{
+            "name": "id", 
+            "in": "path", 
+            "required": true, 
+            "description": "ID kendaraan yang ingin dilihat reviewnya",
+            "example": "68587d89ae54e3e1ba095eb1",
+            "schema": {"type": "string"}
+            }],
+        "responses": {
+          "200": {
+            "description": "Daftar ulasan", 
+            "content": {
+                "application/json": {
+                    "example": {
+                        "data": [
+                            {
+                            "_id": "6858af36121316d2da79d1ea",
+                            "customerId": {
+                                "_id": "68565243d49fbf26780b1393",
+                                "fullName": "Faqih Khawarizzer",
+                                "image": "https://res.cloudinary.com/dnwjbxkzp/image/upload/v1750529350/customers/profile/ntu6lp9jirkgogxg9ga2.jpg"
+                            },
+                            "rating": 5,
+                            "review": "Mobil bersih dan nyaman",
+                            "reviewAddedAt": "2025-06-23 09:01"
+                            }
+                        ]
+                    }
+                }
+            }
+          }
+        }
+      }
+    },
+    "/vehicles/{id}/checkout": {
+      "post": {
+        "summary": "Checkout kendaraan",
+        "tags": ["Customer"],
+        "security": [{"bearerAuth": []}],
+        "parameters": [{
+            "name": "id", 
+            "in": "path", 
+            "description": "ID kendaraan yang ingin dirental",
+            "required": true, 
+            "example": "68587d89ae54e3e1ba095eb1",
+            "schema": {"type": "string"}}],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "withDriver": true,
+                "ordererName": "The Greatest Passenger That's Ever Lived",
+                "ordererPhone": "08123456789",
+                "ordererEmail": "tgptel@gmail.com",
+                "startedAt": "2025-07-01, 09:00",
+                "locationStart": "Timur ITB",
+                "finishedAt": "2025-07-01, 17:00",
+                "locationEnd": "Barat ITB",
+                "note": "Perjalanan dinas"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Checkout berhasil", 
+            "content": {
+                "application/json": {
+                    "example": {
+                        "message": "Order berhasil",
+                        "rental": {
+                            "transactionId": "OOXB84",
+                            "customerId": "68565243d49fbf26780b1393",
+                            "driverId": "68565416d49fbf26780b13af",
+                            "vehicleId": "68587d89ae54e3e1ba095eb1",
+                            "branchId": "6856534ed49fbf26780b13a0",
+                            "ordererName": "The Greatest Passenger That's Ever Lived",
+                            "ordererPhone": "08123456789",
+                            "ordererEmail": "tgptel@gmail.com",
+                            "startedAt": "2025-07-01T02:00:00.000Z",
+                            "locationStart": "Timur ITB",
+                            "ratePerHour": 100000,
+                            "finishedAt": "2025-07-01T10:00:00.000Z",
+                            "locationEnd": "Barat ITB",
+                            "_id": "6858b80cb0513a59fa38ec1b",
+                            "createdAt": "2025-06-23T02:12:28.409Z",
+                            "updatedAt": "2025-06-23T02:12:28.409Z",
+                            "__v": 0,
+                            "amount": 1000000
+                        }
+                        }
+                }
+            }
+          }
+        }
+      }
+    },
+    "/customer/edit": {
+      "post": {
+        "summary": "Edit profil customer",
+        "tags": ["Customer"],
+        "security": [{"bearerAuth": []}],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "fullName": {"type": "string"},
+                  "phoneNumber": {"type": "string"},
+                  "address": {"type": "string"},
+                  "image": {"type": "string", "format": "binary"}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Profil berhasil diupdate", 
+            "content": {
+                "application/json": {
+                    "example": {
+                        "message": "Profile berhasil diupdate",
+                        "data": {
+                            "_id": "68565243d49fbf26780b1393",
+                            "fullName": "Faqih Khawaricky",
+                            "email": "customersatu@gmail.com",
+                            "phoneNumber": "0888888888",
+                            "address": "Rumah saya",
+                            "role": "customer",
+                            "deletedAt": null,
+                            "createdAt": "2025-06-21T06:33:39.859Z",
+                            "updatedAt": "2025-06-23T02:18:53.374Z",
+                            "__v": 0,
+                            "image": "https://res.cloudinary.com/dnwjbxkzp/image/upload/v1750645204/customers/profile/zbdzhap3hzwr1gnbcpub.jpg"
+                        }
+                    }
+                }
+            }
+          }
+        }
+      }
+    }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT",
+                "description": "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\""
+            }
+        }
+    }
+}

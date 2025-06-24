@@ -47,7 +47,28 @@ const signinService = async ({email, password}) => {
   };   
 }
 
+const changePasswordService = async ({email, newPassword}) => {
+  if (!email || !newPassword) {
+    throw new BadRequestError('Email dan password baru harus diisi');
+  }
+
+  const user = await User.findOne({email: email});
+  
+  if (!user) {
+    throw new NotFoundError("Email tidak ditemukan");
+  }
+
+  user.password = newPassword;
+  await user.save();
+
+  return {
+    message: "Password berhasil diubah",
+    email: user.email
+  };
+}
+
 module.exports = {
-  signupService,
-  signinService
+    signupService,
+    signinService,
+    changePasswordService
 }
