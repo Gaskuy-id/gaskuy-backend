@@ -25,6 +25,12 @@ app.use(
 const notFoundMiddleware = require('./app/middlewares/not-found');
 const handlerErrorMiddleware = require('./app/middlewares/handler-error');
 
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./openapi.json');
+
+// You can mount it at /api-docs or any route you like
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
